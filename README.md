@@ -1,276 +1,229 @@
 # ElectIQ — The Living Election Dashboard
 
-> An AI-powered civic education platform that helps users understand the election process, timelines, and voting steps for every country on Earth — interactively and in real time.
-
-
+> An AI-powered civic education platform that helps users understand the election process, timelines, and voting steps for every country on Earth — interactively, accessibly, and in real time
 
 ---
 
-## What is ElectIQ?
+## Chosen Vertical
 
-ElectIQ is a real-time, interactive election education platform. Users land on a spinning 3D globe, click any country, and instantly receive an AI-generated breakdown of that country's election process — complete with step-by-step timelines, voice narration, a knowledge quiz, and live election data.
+**Civic Education & Democratic Participation**
 
-No more confusing government websites. No more guessing. Just click, learn, and vote with confidence.
+First-time voters around the world face the same problem: the election process is confusing, government websites are hard to navigate, and there is no single place that explains what to do, when, and why — in plain language.
+
+ElectIQ solves this. It is a living, real-time election dashboard where users land on a spinning 3D globe, click any country on Earth, and instantly receive a full breakdown of that country's election process — step by step, in plain English, with voice narration, a knowledge quiz, and live election data.
+
+**Who it is for:**
+- First-time voters who do not know where to start
+- Citizens who recently moved to a new country
+- Students learning about comparative democratic systems
+- Educators teaching civics
 
 ---
 
-## Tech Stack
+## Approach and Logic
 
-| Component | Technology |
+### The Core Problem
+Most civic education tools are static, text-heavy, and built for people who already understand elections. Voter turnout is low globally not because people don't care — but because the process feels inaccessible.
+
+### Why This Approach
+
+**1. Visual before text**
+A spinning 3D globe is the entry point. Users click a country rather than filling out a search form. The visual immediately communicates global scale and makes exploration feel natural, not like homework.
+
+**2. AI instead of a database**
+Maintaining accurate election data for 195 countries manually is impossible — it goes out of date instantly. Instead, Google Gemini Pro generates each country's election content on demand. One click on Nigeria triggers a live Gemini call that returns a step-by-step Nigerian election timeline, quiz questions, and key facts. No hardcoded data. Always fresh.
+
+**3. Voice for accessibility**
+Google Cloud Text-to-Speech reads every AI explanation aloud using a Neural2 voice. This serves users with visual impairments, low literacy, or those who simply prefer audio — expanding the platform's reach significantly.
+
+**4. Progressive engagement**
+The user journey is layered deliberately:
+```
+See the globe → Click a country → Read the timeline
+→ Hear the explanation → Take the quiz → Set deadline reminders
+```
+Each layer deepens understanding without overwhelming. Users who want a 30-second overview get it. Users who want to master the topic can go deeper.
+
+**5. Privacy first**
+All user data — quiz scores, notification preferences, cached AI responses — is stored locally on the user's device using localStorage and IndexedDB. Nothing is collected or sent to any external server.
+
+### Key Technical Decisions
+
+| Decision | Reason |
 |---|---|
-| Frontend Engine | React + Vite |
-| 3D Globe | Three.js + @react-three/fiber |
-| AI Reasoning | Google Gemini API (Pro) |
-| Voice Synthesis | Google Cloud Text-to-Speech (Neural2) |
-| Data Acquisition | Node.js + Puppeteer + Cheerio |
-| Push Notifications | Web Push API + Service Workers |
-| Storage | localStorage + IndexedDB (privacy-first) |
-| Styling | Tailwind CSS |
+| Gemini over a static database | 195 countries × timeline + quiz + facts = thousands of data points to maintain. Gemini generates it all on demand. |
+| Three.js globe over a flat map | The globe is the wow moment. It makes the global scope of democracy tangible in a way a flat map never could. |
+| localStorage + IndexedDB | No user accounts needed. Fast, private, works offline after first visit. |
+| Node.js + Puppeteer backend | Government election sites don't have APIs. Puppeteer scrapes real upcoming election dates from official sources. |
+| Service Worker for push notifications | Election deadlines are time-sensitive. Users need reminders even when the app is closed. |
 
 ---
 
-## Features
+## How the Solution Works
 
-### 🌍 Interactive 3D Globe
-- Spinning Earth rendered with Three.js
-- Glowing animated hotspot markers on countries with active elections
-- Click any country on the globe to explore its election process
-- All 195 countries supported — not just a handful
+### User Journey
+```
+User opens ElectIQ
+  → Spinning 3D globe loads with glowing hotspots on active election countries
+  → User clicks any country on the globe (or selects from pill buttons)
+  → Skeleton loading screen appears
+  → Gemini API is called in parallel for:
+       - 6-step election timeline
+       - Plain-English AI explainer
+       - 3-question knowledge quiz
+       - 3 surprising facts
+  → Country panel slides in with 3 tabs: Timeline | AI Explanation | Quiz
+  → User taps "Read aloud" → Google TTS narrates the explanation
+  → User completes quiz → sees score and can retry
+  → User subscribes to push notifications for upcoming election deadlines
+```
 
-### 🤖 Gemini AI — Dynamic Election Data
-- Click any country → Gemini Pro generates that country's full election breakdown on demand
-- No hardcoded data — every country is powered by AI
-- Four AI functions per country:
-  - Election explainer (plain English overview)
-  - 6-step election timeline with dates
-  - 3-question knowledge quiz
-  - 3 surprising election facts
+### Architecture
+```
+┌──────────────────────────────────────────────┐
+│              React Frontend                   │
+│                                              │
+│  Three.js Globe                              │
+│       ↓ country click                        │
+│  countryLoader.js                            │
+│       ↓ Promise.all                          │
+│  gemini.js ──────────────→ Gemini Pro API    │
+│  tts.js ─────────────────→ Google TTS API    │
+│  cache.js ───────────────→ localStorage      │
+└──────────────────────────────────────────────┘
+               ↕ REST API
+┌──────────────────────────────────────────────┐
+│           Node.js Backend                    │
+│                                              │
+│  Express → Puppeteer → Cheerio               │
+│  /api/elections/upcoming                     │
+│  /api/elections/active                       │
+└──────────────────────────────────────────────┘
+               ↕
+┌──────────────────────────────────────────────┐
+│          Service Worker                      │
+│                                              │
+│  Web Push API → Election deadline reminders  │
+│  Offline cache → Works without internet      │
+└──────────────────────────────────────────────┘
+```
 
-### 🔊 Google Cloud Text-to-Speech
-- Every AI explanation can be read aloud
-- Uses Google Neural2 voice (en-US-Neural2-D)
-- Play, pause, and replay controls
-- Works on mobile and desktop
+### Google Gemini Integration
+Four prompt functions power all country content:
 
-### 📋 Step-by-Step Timeline
-- 6 key phases of each country's election process
-- Numbered steps with titles, descriptions, and date badges
-- Generated dynamically by Gemini — always accurate
+```js
+// 1. Plain-English overview (5 sentences, returned as text)
+getElectionExplainer(countryName)
 
-### 🧠 Knowledge Quiz
-- 3 multiple choice questions per country
-- Instant feedback: green for correct, red for wrong
-- Auto-advances after each answer
-- Completion screen with retry option
+// 2. Step-by-step process (returns JSON array of 6 steps)
+getElectionSteps(countryName)
 
-### 🔔 Push Notifications
-- Subscribe to election deadline reminders
-- Notified when voter registration closes
-- Notified 7 days before election day
-- Service Worker handles delivery even when app is closed
+// 3. Knowledge quiz (returns JSON array of 3 questions)
+getElectionQuiz(countryName)
 
-### 💾 Privacy-First Storage
-- All user data stored locally (localStorage + IndexedDB)
-- No personal data ever sent to external servers
-- 24-hour cache for AI responses — reduces API calls
-- Cached data loads instantly on repeat visits
+// 4. Surprising facts (returns JSON array of 3 strings)
+getElectionFacts(countryName)
+```
 
-### 📡 Live Election Data
-- Node.js backend scrapes real-time election news
-- Puppeteer + Cheerio extract upcoming election dates
-- Globe hotspots update to reflect currently active elections
-- REST API serves fresh data to the frontend
+All four run simultaneously with `Promise.all` — total wait time equals the slowest single call, not all four combined.
 
----
+### Caching
+```
+User clicks country
+  → Check memory cache      → HIT: instant (0ms)
+  → Check localStorage      → HIT: <50ms (24hr TTL)
+  → Call Gemini API         → store in both caches → render
+```
 
-## Project Structure
+A returning user who visited the same country yesterday sees results instantly. Fresh countries trigger one Gemini call, then are cached for 24 hours.
 
+### Google TTS Integration
+```js
+// Calls Google Cloud TTS REST API
+// Returns base64 MP3 → plays via new Audio()
+// Voice: en-US-Neural2-D (natural, authoritative)
+speakText(explanationText)
+```
+
+### Push Notifications
+```
+User clicks bell icon
+  → Browser requests permission
+  → Service Worker registers and subscribes
+  → Backend schedules reminders:
+      7 days before voter registration closes
+      3 days before election day
+      Morning of election day
+```
+
+### Project Structure
 ```
 electiq/
-├── public/
-│   ├── sw.js                    # Service Worker for push notifications
-│   └── favicon.ico
 ├── src/
 │   ├── components/
-│   │   ├── Navbar.jsx           # Top nav with live badge
-│   │   ├── Globe.jsx            # Three.js 3D globe
-│   │   ├── CountryPanel.jsx     # Slide-in country detail panel
-│   │   ├── TimelineSteps.jsx    # 6-step election timeline
-│   │   ├── QuizTab.jsx          # Knowledge quiz
-│   │   ├── FactsStrip.jsx       # Did you know cards
-│   │   ├── VoiceButton.jsx      # Google TTS button
-│   │   ├── SkeletonLoader.jsx   # Shimmer loading UI
-│   │   └── NotificationBell.jsx # Push notification toggle
+│   │   ├── Globe.jsx              # Three.js 3D globe
+│   │   ├── CountryPanel.jsx       # Country detail panel
+│   │   ├── TimelineSteps.jsx      # 6-step timeline
+│   │   ├── QuizTab.jsx            # Knowledge quiz
+│   │   ├── VoiceButton.jsx        # Google TTS controls
+│   │   └── SkeletonLoader.jsx     # Loading state UI
 │   ├── services/
-│   │   ├── gemini.js            # All Gemini API functions
-│   │   ├── tts.js               # Google Cloud TTS
-│   │   ├── countryLoader.js     # Dynamic loader with memory cache
-│   │   ├── cache.js             # localStorage cache with TTL
-│   │   └── notifications.js     # Web Push API logic
+│   │   ├── gemini.js              # All Gemini prompt functions
+│   │   ├── tts.js                 # Google Cloud TTS
+│   │   ├── countryLoader.js       # Parallel loader + memory cache
+│   │   └── cache.js               # localStorage with 24hr TTL
 │   ├── data/
-│   │   └── globeCoords.js       # Lat/lon for all 195 countries
-│   ├── App.jsx
-│   └── main.jsx
+│   │   └── globeCoords.js         # Lat/lon for all 195 countries
+│   └── App.jsx
 ├── server/
-│   ├── index.js                 # Express server
-│   ├── scraper.js               # Puppeteer + Cheerio scraper
-│   └── routes/
-│       └── elections.js         # /api/elections endpoint
-├── .env                         # API keys (never commit this)
-├── .env.example                 # Safe template to share
-├── vite.config.js
-├── tailwind.config.js
+│   ├── index.js                   # Express server
+│   ├── scraper.js                 # Puppeteer + Cheerio
+│   └── routes/elections.js        # REST endpoints
+├── public/
+│   └── sw.js                      # Service Worker
+├── .env.example
 └── package.json
 ```
 
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm 9+
-- Google Gemini API key
-- Google Cloud Text-to-Speech API key
-
-### Installation
-
+### Running the Project
 ```bash
-# Clone the repo
+# Clone
 git clone https://github.com/yourusername/electiq.git
 cd electiq
 
-# Install frontend dependencies
+# Install
 npm install
-
-# Install server dependencies
 cd server && npm install && cd ..
+
+# Set up environment variables
+cp .env.example .env
+# Add your Gemini and Google TTS API keys to .env
+
+# Run
+npm run dev          # Frontend → http://localhost:5173
+cd server && node index.js  # Backend → http://localhost:3001
 ```
 
-### Environment Setup
-
-Create a `.env` file in the root:
-
+### Environment Variables
 ```env
-VITE_GEMINI_API_KEY=your_gemini_api_key_here
-VITE_GOOGLE_TTS_API_KEY=your_google_tts_api_key_here
+VITE_GEMINI_API_KEY=your_gemini_api_key
+VITE_GOOGLE_TTS_API_KEY=your_tts_api_key
 VITE_API_BASE_URL=http://localhost:3001
 ```
 
-> Never commit your `.env` file. It is already in `.gitignore`.
+---
 
-### Running the App
+## Assumptions Made
 
-```bash
-# Start the frontend (React + Vite)
-npm run dev
-
-# In a separate terminal, start the backend (Node.js scraper server)
-cd server && node index.js
-```
-
-Frontend runs at: `http://localhost:5173`
-Backend runs at: `http://localhost:3001`
+| Assumption | Reasoning |
+|---|---|
+| Gemini Pro has reliable knowledge of global electoral systems | Gemini's training includes extensive coverage of election law and civic processes worldwide. Content is presented as educational overview, not legal advice. |
+| Broad election steps are stable year-to-year | Registration → campaigning → voting → counting does not change frequently. Specific dates are clearly labelled as approximate. |
+| Users are on a modern browser | Three.js (WebGL), Service Workers, Web Push, and IndexedDB all require a modern browser. A fallback message is shown on unsupported environments. |
+| English is sufficient for v1.0 | The architecture supports multilingual Gemini prompts — passing a `language` parameter is a one-line change. Multilingual support is a v2 priority. |
+| The scraper backend is supplementary | If live election data is unavailable, the app still functions fully. Gemini handles all educational content independently of the scraper. |
+| Notification permission is opt-in only | The app never requests notification permission automatically. Users must explicitly click the bell icon, following browser best practices and user trust principles. |
 
 ---
 
-## API Reference
-
-### Gemini Functions (`src/services/gemini.js`)
-
-| Function | Description | Returns |
-|---|---|---|
-| `getElectionExplainer(country)` | 5-sentence overview of election system | Plain text string |
-| `getElectionSteps(country)` | 6 key phases with dates | JSON array of steps |
-| `getElectionQuiz(country)` | 3 multiple choice questions | JSON array of questions |
-| `getElectionFacts(country)` | 3 surprising facts | JSON array of strings |
-
-### Backend Endpoints (`server/`)
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/elections/upcoming` | GET | List of upcoming elections worldwide |
-| `/api/elections/active` | GET | Countries with elections in next 30 days |
-| `/api/elections/:country` | GET | Scraped election news for a specific country |
-
----
-
-## Caching Strategy
-
-ElectIQ uses a two-layer cache to minimize API calls and maximize speed:
-
-**Layer 1 — Memory cache** (session-scoped)
-- Stores AI responses in a JS object during the session
-- Zero latency on repeated lookups within the same visit
-
-**Layer 2 — localStorage cache** (24-hour TTL)
-- Persists AI responses across page refreshes
-- Expires after 24 hours to ensure data freshness
-- Checked before any Gemini API call is made
-
-```
-User clicks country
-  → Check memory cache → HIT: render instantly
-  → Check localStorage → HIT: render in <50ms
-  → Call Gemini API → store in both caches → render
-```
-
----
-
-## Push Notifications
-
-ElectIQ uses the Web Push API with a Service Worker to deliver election reminders:
-
-1. User clicks the notification bell icon
-2. Browser requests notification permission
-3. Service Worker registers and subscribes to push
-4. Backend stores the subscription
-5. Reminders sent automatically:
-   - 7 days before voter registration closes
-   - 3 days before election day
-   - Day-of polling reminder
-
----
-
-## Build for Production
-
-```bash
-# Build frontend
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-Output in `dist/` — deploy to Vercel, Netlify, or any static host.
-
----
-
-## Development Roadmap
-
-| Day | Focus | Status |
-|---|---|---|
-| Day 1 | React setup, Three.js globe, country panel UI, static data | ✅ Complete |
-| Day 2 | Gemini AI integration, Google TTS, dynamic all-country support | ✅ Complete |
-| Day 3 | Puppeteer scraper, live election data, push notifications | 🔄 In Progress |
-| Day 4 | Quiz polish, facts strip, IndexedDB, performance optimization | ⏳ Upcoming |
-| Day 5 | Mobile responsive, accessibility, bug fixes, production build | ⏳ Upcoming |
-| Day 6 | Demo video, pitch deck, submission | ⏳ Upcoming |
-
----
-
-
-
----
-
-## Contributing
-
-This project was built for the Google Antigravity Hackathon. Contributions and forks are welcome after the submission deadline.
-
-## Acknowledgements
-
-- Google Gemini API for powering dynamic election content
-- Google Cloud Text-to-Speech for voice narration
-- Three.js community for globe rendering inspiration
-- Natural Earth / World Atlas for GeoJSON country data
+*ElectIQ — Making democracy understandable, one country at a time.*
