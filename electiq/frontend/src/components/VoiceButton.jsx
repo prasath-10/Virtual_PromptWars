@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { speakText } from '../services/tts';
 
 export default function VoiceButton({ text }) {
   const [state, setState] = useState('default'); // 'default', 'loading', 'playing'
@@ -24,7 +23,17 @@ export default function VoiceButton({ text }) {
 
     try {
       setState('loading');
-      const audio = await speakText(text);
+      
+      const response = await fetch('http://localhost:5000/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      
+      if (!response.ok) throw new Error('TTS fetch failed');
+      const data = await response.json();
+      
+      const audio = new Audio(`data:audio/mp3;base64,${data.audioContent}`);
       audioRef.current = audio;
       
       audio.onplay = () => setState('playing');
@@ -34,10 +43,12 @@ export default function VoiceButton({ text }) {
           setState('default');
         }
       };
+      
+      audio.play();
     } catch (error) {
       console.error(error);
       setState('default');
-      alert("Failed to load voice. Check your API key.");
+      alert("Failed to load voice. Check your backend server.");
     }
   };
 
