@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TimelineSteps from './TimelineSteps';
+import FactsStrip from './FactsStrip';
+import VoiceButton from './VoiceButton';
 
 function QuizSection({ quiz }) {
   const [currentQ, setCurrentQ] = useState(0);
@@ -109,20 +111,20 @@ export default function CountryPanel({ country, activeTab, setActiveTab }) {
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <span className="text-3xl">{country.flag}</span>
+          <span className="text-3xl">🏳️</span>
           <div>
             <h2 className="text-lg font-medium text-gray-900">{country.name}</h2>
-            <p className="text-[13px] text-gray-500">{country.meta}</p>
+            <p className="text-[13px] text-gray-500">Living Election Dashboard</p>
           </div>
         </div>
         <div className="px-3 py-1 bg-[#E6F1FB] text-[#378ADD] rounded-full text-xs font-semibold">
-          {country.nextElection}
+          Elections Data
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex px-6 pt-4 space-x-2 border-b border-gray-100">
-        {['timeline', 'ai', 'quiz'].map((tab) => {
+        {['ai', 'timeline', 'quiz'].map((tab) => {
           const labels = { timeline: 'Timeline', ai: 'AI Explanation', quiz: 'Quiz' };
           const isActive = activeTab === tab;
           return (
@@ -143,7 +145,7 @@ export default function CountryPanel({ country, activeTab, setActiveTab }) {
 
       {/* Content */}
       <div className="px-6 py-6 min-h-[300px]">
-        {activeTab === 'timeline' && <TimelineSteps steps={country.steps} accentColor={country.accentColor} />}
+        {activeTab === 'timeline' && <TimelineSteps steps={country.steps} accentColor="#378ADD" />}
         
         {activeTab === 'ai' && (
           <div className="mt-2">
@@ -151,13 +153,9 @@ export default function CountryPanel({ country, activeTab, setActiveTab }) {
               <span className="w-2 h-2 rounded-full bg-[#378ADD]"></span>
               <span className="text-sm font-medium text-gray-700">Gemini AI explanation</span>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-6">{country.aiSummary}</p>
-            <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 19l-7-7h-4V12h4l7-7v14z"></path>
-              </svg>
-              <span>Read aloud</span>
-            </button>
+            <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">{country.explainer}</p>
+            <VoiceButton text={country.explainer} />
+            <FactsStrip facts={country.facts} />
           </div>
         )}
 
