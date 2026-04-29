@@ -19,7 +19,7 @@ services:
         value: ./.cache/puppeteer
       - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
         value: "false"
-      - key: VITE_GEMINI_API_KEY
+      - key: GEMINI_API_KEY
         sync: false
 
   - type: web
