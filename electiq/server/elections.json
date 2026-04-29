@@ -1,0 +1,341 @@
+{
+  "elections": [
+    {
+      "country": "Benin",
+      "electionType": "Legislative",
+      "date": "2026-01-11",
+      "daysUntil": -108,
+      "isActive": false
+    },
+    {
+      "country": "Uganda",
+      "electionType": "General",
+      "date": "2026-01-15",
+      "daysUntil": -104,
+      "isActive": false
+    },
+    {
+      "country": "Portugal",
+      "electionType": "Executive",
+      "date": "2026-01-18",
+      "daysUntil": -101,
+      "isActive": false
+    },
+    {
+      "country": "Costa Rica",
+      "electionType": "General",
+      "date": "2026-02-01",
+      "daysUntil": -87,
+      "isActive": false
+    },
+    {
+      "country": "Japan",
+      "electionType": "General",
+      "date": "2026-02-08",
+      "daysUntil": -80,
+      "isActive": false
+    },
+    {
+      "country": "Thailand",
+      "electionType": "General",
+      "date": "2026-02-08",
+      "daysUntil": -80,
+      "isActive": false
+    },
+    {
+      "country": "Bangladesh",
+      "electionType": "General",
+      "date": "2026-02-12",
+      "daysUntil": -76,
+      "isActive": false
+    },
+    {
+      "country": "Lao People's Democratic Republic",
+      "electionType": "Legislative",
+      "date": "2026-02-22",
+      "daysUntil": -66,
+      "isActive": false
+    },
+    {
+      "country": "Nepal",
+      "electionType": "General",
+      "date": "2026-03-05",
+      "daysUntil": -55,
+      "isActive": false
+    },
+    {
+      "country": "Colombia",
+      "electionType": "Legislative",
+      "date": "2026-03-08",
+      "daysUntil": -52,
+      "isActive": false
+    },
+    {
+      "country": "Congo",
+      "electionType": "Executive",
+      "date": "2026-03-15",
+      "daysUntil": -45,
+      "isActive": false
+    },
+    {
+      "country": "Vietnam",
+      "electionType": "Legislative",
+      "date": "2026-03-15",
+      "daysUntil": -45,
+      "isActive": false
+    },
+    {
+      "country": "Djibouti",
+      "electionType": "Executive",
+      "date": "2026-04-01",
+      "daysUntil": -28,
+      "isActive": false
+    },
+    {
+      "country": "Hungary",
+      "electionType": "Legislative",
+      "date": "2026-04-01",
+      "daysUntil": -28,
+      "isActive": false
+    },
+    {
+      "country": "Peru",
+      "electionType": "General",
+      "date": "2026-04-12",
+      "daysUntil": -17,
+      "isActive": false
+    },
+    {
+      "country": "Benin",
+      "electionType": "Executive",
+      "date": "2026-04-12",
+      "daysUntil": -17,
+      "isActive": false
+    },
+    {
+      "country": "Cyprus",
+      "electionType": "Legislative",
+      "date": "2026-05-01",
+      "daysUntil": 2,
+      "isActive": true
+    },
+    {
+      "country": "Colombia",
+      "electionType": "Executive",
+      "date": "2026-05-01",
+      "daysUntil": 2,
+      "isActive": true
+    },
+    {
+      "country": "Lebanon",
+      "electionType": "General",
+      "date": "2026-05-10",
+      "daysUntil": 11,
+      "isActive": true
+    },
+    {
+      "country": "Cabo Verde",
+      "electionType": "Legislative",
+      "date": "2026-05-17",
+      "daysUntil": 18,
+      "isActive": true
+    },
+    {
+      "country": "Ethiopia",
+      "electionType": "General",
+      "date": "2026-06-01",
+      "daysUntil": 33,
+      "isActive": true
+    },
+    {
+      "country": "Algeria",
+      "electionType": "Legislative",
+      "date": "2026-06-01",
+      "daysUntil": 33,
+      "isActive": true
+    },
+    {
+      "country": "Peru",
+      "electionType": "Executive",
+      "date": "2026-06-07",
+      "daysUntil": 39,
+      "isActive": true
+    },
+    {
+      "country": "Armenia",
+      "electionType": "Legislative",
+      "date": "2026-06-07",
+      "daysUntil": 39,
+      "isActive": true
+    },
+    {
+      "country": "Zambia",
+      "electionType": "General",
+      "date": "2026-08-13",
+      "daysUntil": 106,
+      "isActive": false
+    },
+    {
+      "country": "Haiti",
+      "electionType": "General",
+      "date": "2026-08-30",
+      "daysUntil": 123,
+      "isActive": false
+    },
+    {
+      "country": "Czechia",
+      "electionType": "Legislative",
+      "date": "2026-09-01",
+      "daysUntil": 125,
+      "isActive": false
+    },
+    {
+      "country": "Somalia",
+      "electionType": "Legislative",
+      "date": "2026-09-01",
+      "daysUntil": 125,
+      "isActive": false
+    },
+    {
+      "country": "Sweden",
+      "electionType": "General",
+      "date": "2026-09-13",
+      "daysUntil": 137,
+      "isActive": false
+    },
+    {
+      "country": "Morocco",
+      "electionType": "General",
+      "date": "2026-09-23",
+      "daysUntil": 147,
+      "isActive": false
+    },
+    {
+      "country": "Cameroon",
+      "electionType": "Legislative",
+      "date": "2026-10-01",
+      "daysUntil": 155,
+      "isActive": false
+    },
+    {
+      "country": "Latvia",
+      "electionType": "Legislative",
+      "date": "2026-10-01",
+      "daysUntil": 155,
+      "isActive": false
+    },
+    {
+      "country": "Denmark",
+      "electionType": "General",
+      "date": "2026-10-01",
+      "daysUntil": 155,
+      "isActive": false
+    },
+    {
+      "country": "Bosnia and Herzegovina",
+      "electionType": "General",
+      "date": "2026-10-01",
+      "daysUntil": 155,
+      "isActive": false
+    },
+    {
+      "country": "Brazil",
+      "electionType": "General",
+      "date": "2026-10-04",
+      "daysUntil": 158,
+      "isActive": false
+    },
+    {
+      "country": "Israel",
+      "electionType": "Legislative",
+      "date": "2026-10-27",
+      "daysUntil": 181,
+      "isActive": false
+    },
+    {
+      "country": "Bahrain",
+      "electionType": "General",
+      "date": "2026-11-01",
+      "daysUntil": 186,
+      "isActive": false
+    },
+    {
+      "country": "Bulgaria",
+      "electionType": "Executive",
+      "date": "2026-11-01",
+      "daysUntil": 186,
+      "isActive": false
+    },
+    {
+      "country": "Nicaragua",
+      "electionType": "Executive",
+      "date": "2026-11-01",
+      "daysUntil": 186,
+      "isActive": false
+    },
+    {
+      "country": "United States of America",
+      "electionType": "Legislative",
+      "date": "2026-11-03",
+      "daysUntil": 188,
+      "isActive": false
+    },
+    {
+      "country": "New Zealand",
+      "electionType": "General",
+      "date": "2026-11-07",
+      "daysUntil": 192,
+      "isActive": false
+    },
+    {
+      "country": "Cabo Verde",
+      "electionType": "Executive",
+      "date": "2026-11-15",
+      "daysUntil": 200,
+      "isActive": false
+    },
+    {
+      "country": "Fiji",
+      "electionType": "General",
+      "date": "2026-12-01",
+      "daysUntil": 216,
+      "isActive": false
+    },
+    {
+      "country": "Slovenia",
+      "electionType": "Legislative",
+      "date": "2026-12-01",
+      "daysUntil": 216,
+      "isActive": false
+    },
+    {
+      "country": "Russian Federation",
+      "electionType": "Legislative",
+      "date": "2026-12-01",
+      "daysUntil": 216,
+      "isActive": false
+    },
+    {
+      "country": "Kosovo",
+      "electionType": "Executive",
+      "date": "2026-12-01",
+      "daysUntil": 216,
+      "isActive": false
+    },
+    {
+      "country": "Gambia",
+      "electionType": "Executive",
+      "date": "2026-12-01",
+      "daysUntil": 216,
+      "isActive": false
+    },
+    {
+      "country": "South Sudan",
+      "electionType": "General",
+      "date": "2026-12-22",
+      "daysUntil": 237,
+      "isActive": false
+    }
+  ],
+  "lastScraped": "2026-04-29T07:19:06.919Z"
+}

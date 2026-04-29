@@ -1,0 +1,23 @@
+[
+  {
+    "country": "Brazil",
+    "electionType": "General Election",
+    "date": "2026-10-04",
+    "daysUntil": 158,
+    "isActive": false
+  },
+  {
+    "country": "France",
+    "electionType": "Presidential Election",
+    "date": "2027-04-11",
+    "daysUntil": 347,
+    "isActive": false
+  },
+  {
+    "country": "Germany",
+    "electionType": "Federal Election",
+    "date": "2025-09-28",
+    "daysUntil": -213,
+    "isActive": false
+  }
+]
