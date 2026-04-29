@@ -1,21 +1,15 @@
 import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const app = express();
-const port = process.env.PORT || 5000;
-
-app.use(cors());
-app.use(express.json());
-
+const router = express.Router();
 const apiKey = process.env.VITE_GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-app.get('/api/country/:name', async (req, res) => {
+router.get('/country/:name', async (req, res) => {
   const { name } = req.params;
 
   try {
@@ -63,7 +57,7 @@ Return ONLY a valid JSON array:
   }
 });
 
-app.post('/api/tts', async (req, res) => {
+router.post('/tts', async (req, res) => {
   const { text } = req.body;
   if (!text) {
     return res.status(400).json({ error: 'Text is required' });
@@ -99,6 +93,4 @@ app.post('/api/tts', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Backend server running on http://localhost:${port}`);
-});
+export default router;
