@@ -4,7 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const ELECTIONS_FILE = path.join(__dirname, 'elections.json')
+const ELECTIONS_FILE = path.join(__dirname, 'data', 'elections.json')
 const FALLBACK_FILE = path.join(__dirname, 'data', 'elections-fallback.json')
 
 let cachedElections = []

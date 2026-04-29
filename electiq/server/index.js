@@ -22,5 +22,5 @@ scrapeUpcomingElections()
 // Re-scrape every 6 hours
 cron.schedule('0 */6 * * *', () => scrapeUpcomingElections())
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`ElectIQ backend running on port ${PORT}`))

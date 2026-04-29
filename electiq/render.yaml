@@ -1,0 +1,38 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: electiq-backend
+    env: node
+    rootDir: server
+    plan: free # Change to starter/pro if you need a persistent disk
+    buildCommand: bash ./render-build.sh
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18.16.0
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_EMAIL
+        sync: false
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: "false"
+
+  # Frontend Static Site
+  - type: static
+    name: electiq-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishDir: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: electiq-backend
+          property: host
+      - key: VITE_GEMINI_API_KEY
+        sync: false
+      - key: VITE_GOOGLE_TTS_API_KEY
+        sync: false
