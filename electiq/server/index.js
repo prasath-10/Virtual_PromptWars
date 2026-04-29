@@ -15,8 +15,15 @@ const app = express()
 app.use(cors()) // Simplified for deployment
 app.use(express.json())
 
-console.log('Registering routes...')
-app.use('/api/elections', electionsRouter)
+app.use('/api/elections', electionsRouter);
+
+// Test endpoint – optional, can be removed after verification
+app.get('/api/elections/active-test', (req, res) => {
+  console.log('Test route hit');
+  res.json({ test: true, message: 'Active test endpoint works' });
+});
+
+// Existing route registrations (kept unchanged)
 console.log('Routes registered for /api/elections')
 app.use('/api/notifications', notificationsRouter)
 console.log('Routes registered for /api/notifications')
