@@ -2,7 +2,7 @@ services:
   - type: web
     name: electiq-backend
     env: node
-    rootDir: server
+    rootDir: electiq/server
     plan: free
     buildCommand: npm install
     startCommand: node index.js
@@ -23,7 +23,7 @@ services:
   - type: web
     name: electiq-frontend
     env: static
-    rootDir: frontend
+    rootDir: electiq/frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     envVars:
