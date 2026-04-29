@@ -20,11 +20,18 @@ router.get('/upcoming', (req, res) => {
 })
 
 router.get('/active', (req, res) => {
-  console.log('GET /api/elections/active hit - sending test response')
-  res.json({ 
-    message: 'Active endpoint reached successfully',
-    time: new Date().toISOString()
-  })
+  console.log('GET /api/elections/active hit')
+  try {
+    const { elections } = getCachedElections()
+    const filtered = elections.filter(e => e.daysUntil >= 0 && e.daysUntil <= 30)
+    res.json({
+      elections: filtered,
+      count: filtered.length
+    })
+  } catch (error) {
+    console.error('Error in /active:', error)
+    res.status(500).json({ error: 'Failed to fetch active elections' })
+  }
 })
 
 router.get('/:country', (req, res) => {

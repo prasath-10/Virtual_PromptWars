@@ -15,11 +15,6 @@ const app = express()
 app.use(cors()) // Simplified for deployment
 app.use(express.json())
 
-// Debug route directly on app
-app.get('/api/debug', (req, res) => {
-  res.json({ message: 'Direct app route works' })
-})
-
 console.log('Registering routes...')
 app.use('/api/elections', electionsRouter)
 console.log('Routes registered for /api/elections')
