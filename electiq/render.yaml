@@ -20,7 +20,7 @@ services:
         value: "false"
 
   # Frontend Static Site
-  - type: static_site
+  - type: web
     name: electiq-frontend
     env: static
     rootDir: electiq/frontend
