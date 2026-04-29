@@ -11,6 +11,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.get('/country/:name', async (req, res) => {
   const { name } = req.params;
+  console.log(`GET /api/country/${name} hit`);
 
   try {
     const explainerPrompt = `You are a non-partisan civic education expert.
