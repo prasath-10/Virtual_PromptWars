@@ -31,8 +31,6 @@ services:
         value: https://electiq-backend.onrender.com
       - key: VITE_GEMINI_API_KEY
         sync: false
-      - key: VITE_GOOGLE_TTS_API_KEY
-        sync: false
     routes:
       - type: rewrite
         source: /*

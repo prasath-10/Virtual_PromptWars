@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TimelineSteps from './TimelineSteps';
 import FactsStrip from './FactsStrip';
-import VoiceButton from './VoiceButton';
 
 function QuizSection({ quiz }) {
   const [currentQ, setCurrentQ] = useState(0);
@@ -154,7 +153,6 @@ export default function CountryPanel({ country, activeTab, setActiveTab }) {
               <span className="text-sm font-medium text-gray-700">Gemini AI explanation</span>
             </div>
             <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">{country.explainer}</p>
-            <VoiceButton text={country.explainer} />
             <FactsStrip facts={country.facts} />
           </div>
         )}

@@ -56,41 +56,6 @@ Return ONLY a valid JSON array:
     res.status(500).json({ error: 'Failed to fetch country data' });
   }
 });
-
-router.post('/tts', async (req, res) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: 'Text is required' });
-  }
-
-  try {
-    const response = await fetch(
-      `https://texttospeech.googleapis.com/v1/text:synthesize?key=${process.env.VITE_GOOGLE_TTS_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input: { text },
-          voice: {
-            languageCode: 'en-US',
-            name: 'en-US-Neural2-D',
-            ssmlGender: 'MALE'
-          },
-          audioConfig: { audioEncoding: 'MP3' }
-        })
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`TTS API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    res.json({ audioContent: data.audioContent });
-  } catch (error) {
-    console.error('TTS error:', error);
-    res.status(500).json({ error: 'Failed to generate speech' });
-  }
 });
 
 export default router;
