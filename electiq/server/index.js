@@ -14,9 +14,27 @@ initNotificationScheduler()
 const app = express()
 app.use(cors()) // Simplified for deployment
 app.use(express.json())
+
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'online', 
+    message: 'ElectIQ Backend API',
+    endpoints: [
+      '/api/elections/active',
+      '/api/elections/upcoming',
+      '/api/country/:name'
+    ]
+  })
+})
+
+console.log('Registering routes...')
 app.use('/api/elections', electionsRouter)
+console.log('Routes registered for /api/elections')
 app.use('/api/notifications', notificationsRouter)
+console.log('Routes registered for /api/notifications')
 app.use('/api', aiRouter)
+console.log('Routes registered for /api')
 
 // Scrape once on server start
 scrapeUpcomingElections()

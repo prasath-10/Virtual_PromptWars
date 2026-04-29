@@ -11,7 +11,7 @@ export async function loadCountryData(countryName) {
     return cached;
   }
 
-  const response = await fetch(`http://localhost:5000/api/country/${encodeURIComponent(countryName)}`);
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/country/${encodeURIComponent(countryName)}`);
   if (!response.ok) {
       throw new Error(`Failed to fetch data for ${countryName}`);
   }
