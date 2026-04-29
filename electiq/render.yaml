@@ -22,10 +22,10 @@ services:
   # Frontend Static Site
   - type: web
     name: electiq-frontend
-    env: static
+    runtime: static
     rootDir: electiq/frontend
     buildCommand: npm install && npm run build
-    staticPublishDir: dist
+    publishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
         value: https://electiq-backend.onrender.com
