@@ -3,4 +3,5 @@
 set -o errexit
 
 npm install
+mkdir -p .cache/puppeteer
 npx puppeteer browsers install chrome
