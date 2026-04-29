@@ -23,7 +23,7 @@ router.post('/subscribe', (req, res) => {
 
   try {
     const subscriptions = JSON.parse(fs.readFileSync(SUBS_FILE))
-    
+
     // Check for existing
     const exists = subscriptions.find(s => s.subscription.endpoint === subscription.endpoint)
     if (exists) {
@@ -32,7 +32,7 @@ router.post('/subscribe', (req, res) => {
 
     subscriptions.push({ subscription, country, electionDate })
     fs.writeFileSync(SUBS_FILE, JSON.stringify(subscriptions, null, 2))
-    
+
     res.status(201).json({ message: 'Subscription successful' })
   } catch (error) {
     res.status(500).json({ error: 'Failed to save subscription' })
@@ -50,7 +50,7 @@ router.post('/unsubscribe', (req, res) => {
     let subscriptions = JSON.parse(fs.readFileSync(SUBS_FILE))
     subscriptions = subscriptions.filter(s => s.subscription.endpoint !== endpoint)
     fs.writeFileSync(SUBS_FILE, JSON.stringify(subscriptions, null, 2))
-    
+
     res.status(200).json({ message: 'Unsubscribed successfully' })
   } catch (error) {
     res.status(500).json({ error: 'Failed to unsubscribe' })
