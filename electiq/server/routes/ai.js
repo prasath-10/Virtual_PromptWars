@@ -56,6 +56,5 @@ Return ONLY a valid JSON array:
     res.status(500).json({ error: 'Failed to fetch country data' });
   }
 });
-});
 
 export default router;
