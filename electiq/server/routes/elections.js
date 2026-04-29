@@ -3,10 +3,16 @@ import { getCachedElections } from '../scraper.js'
 
 const router = express.Router()
 
+// ✅ /upcoming — elections in next 365 days
 router.get('/upcoming', (req, res) => {
   console.log('GET /api/elections/upcoming hit')
   try {
     const { elections, lastScraped } = getCachedElections()
+
+    if (!elections || !Array.isArray(elections)) {
+      return res.status(503).json({ error: 'Election data not yet available, scraper may still be initializing' })
+    }
+
     const filtered = elections.filter(e => e.daysUntil >= 0 && e.daysUntil <= 365)
     res.json({
       elections: filtered,
@@ -19,10 +25,20 @@ router.get('/upcoming', (req, res) => {
   }
 })
 
+// ✅ /active — elections in next 30 days
 router.get('/active', (req, res) => {
   console.log('GET /api/elections/active hit')
   try {
     const { elections } = getCachedElections()
+
+    if (!elections || !Array.isArray(elections)) {
+      return res.status(503).json({
+        error: 'Election data not yet available, scraper may still be initializing',
+        elections: [],
+        count: 0
+      })
+    }
+
     const filtered = elections.filter(e => e.daysUntil >= 0 && e.daysUntil <= 30)
     res.json({
       elections: filtered,
@@ -34,15 +50,29 @@ router.get('/active', (req, res) => {
   }
 })
 
+// ✅ /:country — MUST stay last to avoid swallowing /active and /upcoming
 router.get('/:country', (req, res) => {
   const { country } = req.params
+
+  // Guard: prevent "active" or "upcoming" from falling into this if ever mis-ordered
+  const reserved = ['active', 'upcoming']
+  if (reserved.includes(country.toLowerCase())) {
+    return res.status(400).json({ error: `"${country}" is a reserved route, not a country name` })
+  }
+
   console.log(`GET /api/elections/${country} hit`)
   try {
     const { elections } = getCachedElections()
-    const filtered = elections.filter(e => e.country.toLowerCase() === country.toLowerCase())
-    
+
+    if (!elections || !Array.isArray(elections)) {
+      return res.status(503).json({ error: 'Election data not yet available' })
+    }
+
+    const filtered = elections.filter(
+      e => e.country.toLowerCase() === country.toLowerCase()
+    )
+
     if (filtered.length === 0) {
-      console.log(`No elections found for country: ${country}`)
       return res.status(404).json({ country, elections: [], found: false })
     }
 

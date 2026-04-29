@@ -12,42 +12,13 @@ dotenv.config()
 initNotificationScheduler()
 
 const app = express()
-app.use(cors()) // Simplified for deployment
+app.use(cors())
 app.use(express.json())
 
-app.use('/api/elections', electionsRouter);
-
-// Test endpoint – optional, can be removed after verification
-app.get('/api/elections/active-test', (req, res) => {
-  console.log('Test route hit');
-  res.json({ test: true, message: 'Active test endpoint works' });
-});
-
-// Existing route registrations (kept unchanged)
-console.log('Routes registered for /api/elections')
-app.use('/api/notifications', notificationsRouter)
-console.log('Routes registered for /api/notifications')
-app.use('/api', aiRouter);
-console.log('Routes registered for /api');
-
-// -------------------------------------------------
-// 2️⃣ Direct fallback for /api/elections/active (bypass router for debugging)
-app.get('/api/elections/active', (req, res) => {
-  console.log('⚡️ Direct /api/elections/active hit');
-  // Return a minimal payload so the frontend can render something
-  res.json({ debug: true, message: 'Direct active endpoint works' });
-});
-
-// -------------------------------------------------
-// Global 404 – return JSON for any unknown endpoint
-app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found' });
-});
-
-// Health check route
+// ✅ 1. Health check FIRST (before everything)
 app.get('/', (req, res) => {
-  res.json({ 
-    status: 'online', 
+  res.json({
+    status: 'online',
     message: 'ElectIQ Backend API',
     endpoints: [
       '/api/elections/active',
@@ -55,6 +26,16 @@ app.get('/', (req, res) => {
       '/api/country/:name'
     ]
   })
+})
+
+// ✅ 2. Register all routers
+app.use('/api/elections', electionsRouter)
+app.use('/api/notifications', notificationsRouter)
+app.use('/api', aiRouter)
+
+// ✅ 3. Global 404 handler LAST (after all routes)
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint not found' })
 })
 
 // Scrape once on server start
