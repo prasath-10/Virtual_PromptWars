@@ -19,6 +19,8 @@ services:
         value: ./.cache/puppeteer
       - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
         value: "false"
+      - key: VITE_GEMINI_API_KEY
+        sync: false
 
   - type: web
     name: electiq-frontend
@@ -29,8 +31,6 @@ services:
     envVars:
       - key: VITE_API_BASE_URL
         value: https://electiq-backend.onrender.com
-      - key: VITE_GEMINI_API_KEY
-        sync: false
     routes:
       - type: rewrite
         source: /*

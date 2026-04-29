@@ -26,29 +26,49 @@ Return plain text only, no markdown.`;
 Return ONLY a valid JSON array, no markdown, no explanation:
 [
   { "n": 1, "title": "...", "desc": "...", "date": "..." },
-...
+  ...
 ]`;
     const stepsResult = await model.generateContent(stepsPrompt);
-    let stepsText = stepsResult.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
-    const steps = JSON.parse(stepsText);
+
+    const cleanJson = (text) => {
+      return text.replace(/```json/g, '').replace(/```/g, '').trim();
+    };
+
+    let steps = [];
+    try {
+      steps = JSON.parse(cleanJson(stepsResult.response.text()));
+    } catch (e) {
+      console.error('Failed to parse steps:', e);
+      steps = [{ n: 1, title: "Process Loading", desc: "The election process is being updated.", date: "TBD" }];
+    }
 
     const quizPrompt = `Create 3 multiple choice quiz questions about elections in ${name}.
 Return ONLY a valid JSON array, no markdown:
 [
   { "q": "...", "opts": ["...", "...", "...", "..."], "ans": 0 },
-...
+  ...
 ]
 ans is the index of the correct answer (0-3).`;
     const quizResult = await model.generateContent(quizPrompt);
-    let quizText = quizResult.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
-    const quiz = JSON.parse(quizText);
+    let quiz = [];
+    try {
+      quiz = JSON.parse(cleanJson(quizResult.response.text()));
+    } catch (e) {
+      console.error('Failed to parse quiz:', e);
+      quiz = [];
+    }
 
     const factsPrompt = `Give 3 surprising facts about elections or democracy in ${name}.
 Return ONLY a valid JSON array:
 [ "fact 1", "fact 2", "fact 3" ]`;
     const factsResult = await model.generateContent(factsPrompt);
-    let factsText = factsResult.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
-    const facts = JSON.parse(factsText);
+    let facts = [];
+    try {
+      facts = JSON.parse(cleanJson(factsResult.response.text()));
+    } catch (e) {
+      console.error('Failed to parse facts:', e);
+      facts = ["Democratic processes are unique here.", "Voter engagement is a key priority.", "Election systems are evolving."];
+    }
 
     res.json({ explainer, steps, quiz, facts });
 
