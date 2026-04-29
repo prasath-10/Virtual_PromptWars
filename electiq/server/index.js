@@ -4,9 +4,11 @@ import cron from 'node-cron'
 import { scrapeUpcomingElections } from './scraper.js'
 import electionsRouter from './routes/elections.js'
 import notificationsRouter from './routes/notifications.js'
+import { initNotificationScheduler } from './notificationScheduler.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
+initNotificationScheduler()
 
 const app = express()
 app.use(cors({ origin: 'http://localhost:5173' }))

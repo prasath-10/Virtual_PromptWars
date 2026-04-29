@@ -12,14 +12,26 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [electionDate, setElectionDate] = useState(null);
+
   const handleCountrySelect = async (name) => {
     setSelectedCountryName(name);
-    setActiveTab('ai'); // AI Explanation tab is default
+    setActiveTab('ai');
     setIsLoading(true);
     setError(null);
+    setElectionDate(null);
     try {
       const data = await loadCountryData(name);
       setCountryData({ name, ...data });
+
+      // Fetch election date from our new API
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/${encodeURIComponent(name)}`);
+      if (res.ok) {
+        const electData = await res.json();
+        if (electData.found && electData.elections.length > 0) {
+          setElectionDate(electData.elections[0].date);
+        }
+      }
     } catch (err) {
       console.error(err);
       setError(err);
@@ -30,7 +42,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans">
-      <Navbar />
+      <Navbar country={selectedCountryName} electionDate={electionDate} />
       
       <GlobeSection 
         selectedCountryId={selectedCountryName} 
