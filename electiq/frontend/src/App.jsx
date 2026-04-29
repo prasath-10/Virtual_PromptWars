@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import GlobeSection from './components/Globe';
 import CountryPanel from './components/CountryPanel';
+import ElectionsStrip from './components/ElectionsStrip';
+import ErrorBoundary from './components/ErrorBoundary';
 import { loadCountryData } from './services/countryLoader';
 import SkeletonLoader from './components/SkeletonLoader';
 
@@ -11,7 +13,6 @@ export default function App() {
   const [countryData, setCountryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [electionDate, setElectionDate] = useState(null);
 
   const handleCountrySelect = async (name) => {
@@ -39,15 +40,21 @@ export default function App() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans">
       <Navbar country={selectedCountryName} electionDate={electionDate} />
       
-      <GlobeSection 
-        selectedCountryId={selectedCountryName} 
-        onCountrySelect={handleCountrySelect} 
-      />
+      <ErrorBoundary name="Globe" fallback={<div className="h-[400px] bg-[#0a1628] flex items-center justify-center text-white/40">3D Visualization Unavailable</div>}>
+        <GlobeSection 
+          selectedCountryId={selectedCountryName} 
+          onCountrySelect={handleCountrySelect} 
+        />
+      </ErrorBoundary>
+
+      <ErrorBoundary name="Elections Strip">
+        <ElectionsStrip onCountrySelect={handleCountrySelect} />
+      </ErrorBoundary>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="mt-4 min-h-[300px]">
@@ -74,11 +81,13 @@ export default function App() {
             </div>
           )}
           {selectedCountryName && !isLoading && !error && countryData && (
-            <CountryPanel 
-              country={countryData} 
-              activeTab={activeTab} 
-              setActiveTab={setActiveTab} 
-            />
+            <ErrorBoundary name="Country Information Panel">
+              <CountryPanel 
+                country={countryData} 
+                activeTab={activeTab} 
+                setActiveTab={setActiveTab} 
+              />
+            </ErrorBoundary>
           )}
         </div>
       </main>
