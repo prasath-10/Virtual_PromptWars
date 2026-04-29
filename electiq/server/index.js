@@ -27,8 +27,22 @@ app.get('/api/elections/active-test', (req, res) => {
 console.log('Routes registered for /api/elections')
 app.use('/api/notifications', notificationsRouter)
 console.log('Routes registered for /api/notifications')
-app.use('/api', aiRouter)
-console.log('Routes registered for /api')
+app.use('/api', aiRouter);
+console.log('Routes registered for /api');
+
+// -------------------------------------------------
+// 2️⃣ Direct fallback for /api/elections/active (bypass router for debugging)
+app.get('/api/elections/active', (req, res) => {
+  console.log('⚡️ Direct /api/elections/active hit');
+  // Return a minimal payload so the frontend can render something
+  res.json({ debug: true, message: 'Direct active endpoint works' });
+});
+
+// -------------------------------------------------
+// Global 404 – return JSON for any unknown endpoint
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint not found' });
+});
 
 // Health check route
 app.get('/', (req, res) => {
