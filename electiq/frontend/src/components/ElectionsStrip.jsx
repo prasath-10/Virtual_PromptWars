@@ -45,7 +45,7 @@ export default function ElectionsStrip({ onCountrySelect }) {
       </div>
       
       <ul role="list" className="flex gap-4 overflow-x-auto px-6 pb-4 scroll-smooth">
-        {elections.map((election, idx) => (
+        {(elections || []).map((election, idx) => (
           <li key={`${election.country}-${idx}`} role="listitem" className="min-w-[200px] sm:min-w-[240px]">
             <div 
               className="h-full bg-gray-50 rounded-2xl p-4 border border-black/5 hover:border-[#378ADD]/30 hover:bg-blue-50/30 transition-all duration-300 group/card cursor-pointer flex flex-col"

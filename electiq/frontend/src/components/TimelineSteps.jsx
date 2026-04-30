@@ -4,7 +4,7 @@ export default function TimelineSteps({ steps, accentColor }) {
   return (
     <div className="flex flex-col space-y-6 mt-4 relative">
       <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-gray-200" />
-      {steps.map((step, idx) => (
+      {(steps || []).map((step, idx) => (
         <div key={idx} className="flex relative items-start">
           <div 
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-sm z-10 shrink-0"

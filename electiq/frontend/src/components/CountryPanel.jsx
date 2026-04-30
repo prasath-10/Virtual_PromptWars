@@ -14,6 +14,10 @@ function QuizSection({ quiz, onCountryReset }) {
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
 
+  if (!quiz || quiz.length === 0) {
+    return <div className="text-gray-500 text-center py-8">No quiz available for this country.</div>;
+  }
+
   useEffect(() => {
     setCurrentQ(0);
     setSelectedOpt(null);
@@ -144,7 +148,7 @@ function QuizSection({ quiz, onCountryReset }) {
 
       <h3 className="text-lg font-medium text-gray-800 mb-6">{question.q}</h3>
       <div className="space-y-3">
-        {question.opts.map((opt, idx) => {
+        {(question.opts || []).map((opt, idx) => {
           let btnClass = "w-full text-left px-4 py-3 rounded-lg border text-sm font-medium transition ";
           
           if (selectedOpt === null) {
