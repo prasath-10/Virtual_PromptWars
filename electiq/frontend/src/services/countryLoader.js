@@ -1,4 +1,3 @@
-import { getCountryDetails } from './gemini';
 import { saveCountry, loadCountry } from './db';
 import { API } from './api';
 
