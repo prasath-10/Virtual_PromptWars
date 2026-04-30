@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import GlobeSection from './components/Globe';
-import CountryPanel from './components/CountryPanel';
 import ElectionsStrip from './components/ElectionsStrip';
 import { loadCountryData } from './services/countryLoader';
 import SkeletonLoader from './components/SkeletonLoader';
 import RecentlyViewed from './components/RecentlyViewed';
 import ToastContainer, { toast } from './components/Toast';
+import ErrorBoundary from './components/ErrorBoundary';
+
+const CountryPanel = lazy(() => import('./components/CountryPanel'));
 
 export default function App() {
   const [selectedCountryName, setSelectedCountryName] = useState(null);
@@ -119,15 +121,17 @@ export default function App() {
               </button>
             </div>
           )}
-          {selectedCountryName && !isLoading && !error && countryData && (
-            <ErrorBoundary name="Country Information Panel">
-              <CountryPanel 
-                country={countryData} 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
-                onCountryReset={handleCountryReset}
-              />
-            </ErrorBoundary>
+          {selectedCountryName && countryData && !isLoading && !error && (
+            <Suspense fallback={<SkeletonLoader />}>
+              <ErrorBoundary name="Country Information Panel">
+                <CountryPanel 
+                  country={countryData} 
+                  activeTab={activeTab} 
+                  setActiveTab={setActiveTab} 
+                  onCountryReset={handleCountryReset}
+                />
+              </ErrorBoundary>
+            </Suspense>
           )}
         </div>
       </main>
