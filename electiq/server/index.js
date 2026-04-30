@@ -12,7 +12,14 @@ dotenv.config()
 initNotificationScheduler()
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://electiq-frontend.onrender.com'
+  ],
+  methods: ['GET', 'POST', 'DELETE'],
+  credentials: true
+}))
 app.use(express.json())
 
 // ✅ 1. Health check FIRST (before everything)

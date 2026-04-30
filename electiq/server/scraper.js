@@ -8,7 +8,9 @@ const DATA_DIR = path.join(__dirname, 'data')
 const ELECTIONS_FILE = path.join(DATA_DIR, 'elections.json')
 const FALLBACK_FILE = path.join(DATA_DIR, 'elections-fallback.json')
 
-let cachedElections = []
+import fallback from './data/elections-fallback.json' assert { type: 'json' }
+
+let cachedElections = fallback.elections || fallback
 let lastScraped = null
 let isScrapingInProgress = false
 
@@ -199,11 +201,10 @@ function loadFallback() {
 }
 
 export function getCachedElections() {
-  if (cachedElections.length === 0) {
-    console.log('Cache empty, loading fallback...')
-    loadFallback()
+  return { 
+    elections: cachedElections, 
+    lastScraped: lastScraped || new Date().toISOString()
   }
-  return { elections: cachedElections, lastScraped }
 }
 
 // ✅ Seed data — ensures API always returns something even on first cold start
