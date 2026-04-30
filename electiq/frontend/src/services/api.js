@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_BASE_URL
+const BASE = import.meta.env.VITE_API_BASE_URL || 'https://electiq-backend-sx83.onrender.com'
 
 export const API = {
   health:   `${BASE}/health`,
