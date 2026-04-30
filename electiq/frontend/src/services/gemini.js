@@ -3,12 +3,7 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GE
 
 // ── Core caller with retry logic ─────────────────────────
 async function callGemini(prompt, retries = 2) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-
-  if (!apiKey) {
-    console.error('VITE_GEMINI_API_KEY is not set')
-    return null
-  }
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA9CWA2kplzin5dSYoCjc8gc8BM04DbphE'
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
