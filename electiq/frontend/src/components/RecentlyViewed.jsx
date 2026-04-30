@@ -17,9 +17,9 @@ export default function RecentlyViewed({ currentCountry, onCountrySelect }) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 pt-6 pb-2">
-      <div className="flex items-center space-x-3 overflow-x-auto whitespace-nowrap">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 overflow-x-auto whitespace-nowrap">
         <span className="text-sm font-medium text-gray-500">Recently viewed:</span>
-        <div className="flex space-x-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:space-x-2 sm:gap-0">
           {countries.map(country => (
             <button
               key={country}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from './Toast';
 
 const VAPID_PUBLIC_KEY = 'BN_1d-1T_dJFKYkJ9tlitGJ3gBs8_1hwj77WHvhI_C1Hq_4pOlPLXKL2WRhIaRSkyP9VssXbnAOxlaEAJJCwxmQ';
 
@@ -31,7 +32,7 @@ export default function NotificationBell({ country, electionDate }) {
 
   const handleToggleSubscription = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      alert('Push notifications are not supported in this browser.');
+      toast.error('Push notifications are not supported in this browser.');
       return;
     }
 
@@ -54,7 +55,7 @@ export default function NotificationBell({ country, electionDate }) {
         // Subscribe
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-          alert('Permission not granted for notifications');
+          toast.error('Enable notifications in browser settings');
           setLoading(false);
           return;
         }
@@ -76,11 +77,11 @@ export default function NotificationBell({ country, electionDate }) {
         });
 
         setIsSubscribed(true);
-        alert("You'll be reminded before election day!");
+        toast.info("You'll be reminded before election day 🗳");
       }
     } catch (error) {
       console.error('Subscription error:', error);
-      alert('Failed to update subscription');
+      toast.error('Failed to update subscription');
     }
     setLoading(false);
   };

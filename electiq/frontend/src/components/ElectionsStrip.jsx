@@ -18,7 +18,7 @@ export default function ElectionsStrip({ onCountrySelect }) {
       <div className="w-full bg-white border-b border-black/5 py-6 px-6 overflow-hidden">
         <div className="flex gap-4 animate-pulse">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="min-w-[200px] h-32 bg-gray-100 rounded-xl"></div>
+            <div key={i} className="min-w-[200px] sm:min-w-[240px] h-32 bg-gray-100 rounded-xl"></div>
           ))}
         </div>
       </div>
@@ -39,11 +39,11 @@ export default function ElectionsStrip({ onCountrySelect }) {
         </span>
       </div>
       
-      <div className="flex gap-4 overflow-x-auto px-6 pb-2 no-scrollbar scroll-smooth">
+      <div className="flex gap-4 overflow-x-auto px-6 pb-4 scroll-smooth">
         {elections.map((election, idx) => (
           <div 
             key={`${election.country}-${idx}`}
-            className="min-w-[240px] bg-gray-50 rounded-2xl p-4 border border-black/5 hover:border-[#378ADD]/30 hover:bg-blue-50/30 transition-all duration-300 group/card cursor-pointer"
+            className="min-w-[200px] sm:min-w-[240px] bg-gray-50 rounded-2xl p-4 border border-black/5 hover:border-[#378ADD]/30 hover:bg-blue-50/30 transition-all duration-300 group/card cursor-pointer"
             onClick={() => onCountrySelect(election.country)}
           >
             <div className="flex justify-between items-start mb-2">

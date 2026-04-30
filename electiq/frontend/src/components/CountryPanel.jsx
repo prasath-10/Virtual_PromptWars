@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TimelineSteps from './TimelineSteps';
 import FactsStrip from './FactsStrip';
+import { toast } from './Toast';
+import VoiceButton from './VoiceButton';
 
 function QuizSection({ quiz, onCountryReset }) {
   const [currentQ, setCurrentQ] = useState(0);
@@ -21,6 +23,12 @@ function QuizSection({ quiz, onCountryReset }) {
     setStreak(0);
     setBestStreak(0);
   }, [quiz]);
+
+  useEffect(() => {
+    if (completed && score === quiz.length && quiz.length > 0) {
+      toast.success("Perfect score! 🎉");
+    }
+  }, [completed, score, quiz.length]);
 
   if (completed) {
     let ratingStr = "📚 Read the timeline first!";
@@ -199,7 +207,11 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
       {/* Tabs */}
       <div className="flex px-6 pt-4 space-x-2 border-b border-gray-100">
         {['ai', 'timeline', 'quiz'].map((tab) => {
-          const labels = { timeline: 'Timeline', ai: 'AI Explanation', quiz: 'Quiz' };
+          const labels = { 
+            timeline: <><span className="hidden sm:inline">Timeline</span><span className="sm:hidden">Steps</span></>, 
+            ai: <><span className="hidden sm:inline">AI Explanation</span><span className="sm:hidden">AI</span></>, 
+            quiz: 'Quiz' 
+          };
           const isActive = activeTab === tab;
           return (
             <button
@@ -218,7 +230,7 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
       </div>
 
       {/* Content */}
-      <div className="px-6 py-6 min-h-[300px]">
+      <div className="px-4 sm:px-6 py-6 min-h-[300px]">
         {activeTab === 'timeline' && <TimelineSteps steps={country.steps} accentColor="#378ADD" />}
         
         {activeTab === 'ai' && (
@@ -227,7 +239,12 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
               <span className="w-2 h-2 rounded-full bg-[#378ADD]"></span>
               <span className="text-sm font-medium text-gray-700">Gemini AI explanation</span>
             </div>
-            <p className="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">{country.explainer}</p>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{country.explainer}</p>
+              <div className="shrink-0 w-full sm:w-auto">
+                <VoiceButton text={country.explainer} />
+              </div>
+            </div>
             <FactsStrip facts={country.facts} />
           </div>
         )}

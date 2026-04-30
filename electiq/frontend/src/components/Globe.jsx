@@ -129,7 +129,7 @@ function Hotspot({ data, isSelected, onClick }) {
     <group position={[x, y, z]}>
       <mesh 
         ref={meshRef}
-        onClick={(e) => { e.stopPropagation(); onClick(); }}
+        onPointerUp={(e) => { e.stopPropagation(); onClick(); }}
         onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
         onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
       >
@@ -162,6 +162,14 @@ function Hotspot({ data, isSelected, onClick }) {
 export default function GlobeSection({ selectedCountryId, onCountrySelect }) {
   const [geoData, setGeoData] = useState([]);
   const [activeElections, setActiveElections] = useState([]);
+  const [cameraZ, setCameraZ] = useState(5.5);
+
+  useEffect(() => {
+    const handleResize = () => setCameraZ(window.innerWidth <= 400 ? 6.5 : 5.5);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Fetch world atlas data
@@ -189,7 +197,7 @@ export default function GlobeSection({ selectedCountryId, onCountrySelect }) {
   return (
     <div className="w-full h-[450px] bg-[#0a1628] relative flex flex-col items-center justify-end overflow-hidden">
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 0, 5.5], fov: 45 }}>
+        <Canvas camera={{ position: [0, 0, cameraZ], fov: 45 }}>
           <ambientLight intensity={0.5} />
           <Earth 
             selectedCountryId={selectedCountryId} 

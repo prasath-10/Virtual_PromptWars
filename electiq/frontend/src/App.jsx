@@ -3,10 +3,10 @@ import Navbar from './components/Navbar';
 import GlobeSection from './components/Globe';
 import CountryPanel from './components/CountryPanel';
 import ElectionsStrip from './components/ElectionsStrip';
-import ErrorBoundary from './components/ErrorBoundary';
 import { loadCountryData } from './services/countryLoader';
 import SkeletonLoader from './components/SkeletonLoader';
 import RecentlyViewed from './components/RecentlyViewed';
+import ToastContainer, { toast } from './components/Toast';
 
 export default function App() {
   const [selectedCountryName, setSelectedCountryName] = useState(null);
@@ -14,7 +14,11 @@ export default function App() {
   const [countryData, setCountryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [electionDate, setElectionDate] = useState(null);
+  useEffect(() => {
+    // Silently ping backend on app load to wake Render free tier
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/active`)
+      .catch(() => {}); // intentionally silent
+  }, []);
 
   const handleCountrySelect = async (name) => {
     setSelectedCountryName(name);
@@ -37,6 +41,7 @@ export default function App() {
     } catch (err) {
       console.error(err);
       setError(err);
+      toast.error("Could not load election data. Retrying...");
     } finally {
       setIsLoading(false);
     }
@@ -51,6 +56,7 @@ export default function App() {
   
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans">
+      <ToastContainer />
       <Navbar country={selectedCountryName} electionDate={electionDate} />
       
       <ErrorBoundary name="Globe" fallback={<div className="h-[400px] bg-[#0a1628] flex items-center justify-center text-white/40">3D Visualization Unavailable</div>}>
@@ -69,21 +75,21 @@ export default function App() {
         <ElectionsStrip onCountrySelect={handleCountrySelect} />
       </ErrorBoundary>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="w-full sm:max-w-5xl mx-auto px-0 sm:px-4 py-4 sm:py-8">
         <div className="mt-4 min-h-[300px]">
           {!selectedCountryName && (
-            <div className="text-center text-gray-500 py-12">
+            <div className="text-center text-gray-500 py-12 px-4">
               Select a country on the globe to learn about its elections!
             </div>
           )}
           {selectedCountryName && isLoading && (
-            <div className="bg-white rounded-[8px] border border-black/10 overflow-hidden shadow-sm animate-[slideIn_0.3s_ease-out] p-6">
+            <div className="bg-white sm:rounded-[8px] sm:border border-y border-black/10 overflow-hidden shadow-sm animate-[slideIn_0.3s_ease-out] p-6">
                <h2 className="text-lg font-medium text-gray-900 mb-4">{selectedCountryName} - Loading Data...</h2>
                <SkeletonLoader />
             </div>
           )}
           {selectedCountryName && error && !isLoading && (
-            <div className="text-center py-8 bg-white rounded-lg border">
+            <div className="text-center py-8 bg-white sm:rounded-lg border-y sm:border px-4">
               <p className="text-red-500 mb-4">Error loading data for {selectedCountryName}. Make sure your Gemini API key is configured in .env.</p>
               <button 
                 onClick={() => handleCountrySelect(selectedCountryName)}

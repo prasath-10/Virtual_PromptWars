@@ -16,6 +16,10 @@ app.use(cors())
 app.use(express.json())
 
 // ✅ 1. Health check FIRST (before everything)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
