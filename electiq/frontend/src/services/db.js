@@ -94,9 +94,15 @@ export async function getCachedCountries() {
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(STORE_NAME, 'readonly');
       const store = transaction.objectStore(STORE_NAME);
-      const request = store.getAllKeys();
+      const request = store.getAll();
 
-      request.onsuccess = () => resolve(request.result || []);
+      request.onsuccess = () => {
+        const results = request.result || [];
+        // Sort by timestamp descending
+        results.sort((a, b) => b.timestamp - a.timestamp);
+        // Return countryNames
+        resolve(results.map(r => r.countryName));
+      };
       request.onerror = () => reject(request.error);
     });
   } catch (e) {

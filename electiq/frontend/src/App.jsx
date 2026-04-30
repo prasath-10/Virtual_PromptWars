@@ -6,6 +6,7 @@ import ElectionsStrip from './components/ElectionsStrip';
 import ErrorBoundary from './components/ErrorBoundary';
 import { loadCountryData } from './services/countryLoader';
 import SkeletonLoader from './components/SkeletonLoader';
+import RecentlyViewed from './components/RecentlyViewed';
 
 export default function App() {
   const [selectedCountryName, setSelectedCountryName] = useState(null);
@@ -41,6 +42,13 @@ export default function App() {
     }
   };
   
+  const handleCountryReset = () => {
+    setSelectedCountryName(null);
+    setCountryData(null);
+    setElectionDate(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans">
       <Navbar country={selectedCountryName} electionDate={electionDate} />
@@ -51,6 +59,11 @@ export default function App() {
           onCountrySelect={handleCountrySelect} 
         />
       </ErrorBoundary>
+
+      <RecentlyViewed 
+        currentCountry={selectedCountryName} 
+        onCountrySelect={handleCountrySelect} 
+      />
 
       <ErrorBoundary name="Elections Strip">
         <ElectionsStrip onCountrySelect={handleCountrySelect} />
@@ -86,6 +99,7 @@ export default function App() {
                 country={countryData} 
                 activeTab={activeTab} 
                 setActiveTab={setActiveTab} 
+                onCountryReset={handleCountryReset}
               />
             </ErrorBoundary>
           )}

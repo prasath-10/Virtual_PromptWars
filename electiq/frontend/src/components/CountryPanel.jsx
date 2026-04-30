@@ -2,35 +2,81 @@ import React, { useState, useEffect } from 'react';
 import TimelineSteps from './TimelineSteps';
 import FactsStrip from './FactsStrip';
 
-function QuizSection({ quiz }) {
+function QuizSection({ quiz, onCountryReset }) {
   const [currentQ, setCurrentQ] = useState(0);
   const [selectedOpt, setSelectedOpt] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [completed, setCompleted] = useState(false);
+  
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
 
   useEffect(() => {
     setCurrentQ(0);
     setSelectedOpt(null);
     setIsCorrect(null);
     setCompleted(false);
+    setScore(0);
+    setStreak(0);
+    setBestStreak(0);
   }, [quiz]);
 
   if (completed) {
+    let ratingStr = "📚 Read the timeline first!";
+    let stars = "";
+    const ratio = score / quiz.length;
+    if (ratio === 1) {
+      ratingStr = "Perfect score!";
+      stars = "⭐⭐⭐";
+    } else if (ratio >= 0.66) {
+      ratingStr = "Good effort!";
+      stars = "⭐⭐";
+    } else if (ratio > 0) {
+      ratingStr = "Keep learning!";
+      stars = "⭐";
+    }
+
     return (
       <div className="text-center py-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">🎉 Quiz Completed!</h3>
-        <p className="text-gray-500 mb-6">Great job testing your knowledge.</p>
-        <button 
-          onClick={() => {
-            setCurrentQ(0);
-            setCompleted(false);
-            setSelectedOpt(null);
-            setIsCorrect(null);
-          }}
-          className="px-6 py-2 bg-[#378ADD] text-white rounded-lg font-medium hover:bg-[#2c6eaf] transition"
-        >
-          Retry
-        </button>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">🎉 Quiz Complete!</h3>
+        <div className="bg-gray-50 rounded-lg p-6 max-w-sm mx-auto mb-6 space-y-4">
+          <div className="flex justify-between text-lg">
+            <span className="text-gray-600">Score:</span>
+            <span className="font-bold">{score} / {quiz.length}</span>
+          </div>
+          <div className="flex justify-between text-lg">
+            <span className="text-gray-600">Best streak:</span>
+            <span className="font-bold">{bestStreak} in a row</span>
+          </div>
+          <div className="pt-4 border-t border-gray-200">
+            <div className="text-2xl mb-1">{stars}</div>
+            <div className="text-gray-800 font-medium">{ratingStr}</div>
+          </div>
+        </div>
+        
+        <div className="flex justify-center space-x-4">
+          <button 
+            onClick={onCountryReset}
+            className="px-6 py-2 bg-[#378ADD] text-white rounded-lg font-medium hover:bg-[#2c6eaf] transition"
+          >
+            Try another country
+          </button>
+          <button 
+            onClick={() => {
+              setCurrentQ(0);
+              setCompleted(false);
+              setSelectedOpt(null);
+              setIsCorrect(null);
+              setScore(0);
+              setStreak(0);
+              setBestStreak(0);
+            }}
+            className="px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+          >
+            Retry this quiz
+          </button>
+        </div>
       </div>
     );
   }
@@ -44,6 +90,15 @@ function QuizSection({ quiz }) {
     const correct = idx === question.ans;
     setIsCorrect(correct);
 
+    if (correct) {
+      setScore(s => s + 1);
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      if (newStreak > bestStreak) setBestStreak(newStreak);
+    } else {
+      setStreak(0);
+    }
+
     setTimeout(() => {
       if (currentQ < quiz.length - 1) {
         setCurrentQ(prev => prev + 1);
@@ -52,16 +107,30 @@ function QuizSection({ quiz }) {
       } else {
         setCompleted(true);
       }
-    }, 1200);
+    }, 2000); // give time to read feedback
   };
 
   return (
-    <div className="mt-4">
+    <div className="mt-4 relative">
       <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
           Question {currentQ + 1} of {quiz.length}
         </span>
+        <span className="text-sm font-bold text-[#378ADD]">
+          Score: {score} / {quiz.length}
+        </span>
       </div>
+      
+      {/* Feedback Banner */}
+      {selectedOpt !== null && (
+        <div className={`mb-4 p-3 rounded-lg text-sm font-medium animate-[fadeIn_0.2s_ease-out] ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {isCorrect 
+            ? "✓ Correct!" 
+            : `✗ Wrong — the correct answer was ${question.opts[question.ans]}`
+          }
+        </div>
+      )}
+
       <h3 className="text-lg font-medium text-gray-800 mb-6">{question.q}</h3>
       <div className="space-y-3">
         {question.opts.map((opt, idx) => {
@@ -91,11 +160,17 @@ function QuizSection({ quiz }) {
           );
         })}
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
 
-export default function CountryPanel({ country, activeTab, setActiveTab }) {
+export default function CountryPanel({ country, activeTab, setActiveTab, onCountryReset }) {
   if (!country) return null;
 
   return (
@@ -157,7 +232,7 @@ export default function CountryPanel({ country, activeTab, setActiveTab }) {
           </div>
         )}
 
-        {activeTab === 'quiz' && <QuizSection quiz={country.quiz} />}
+        {activeTab === 'quiz' && <QuizSection quiz={country.quiz} onCountryReset={onCountryReset} />}
       </div>
     </div>
   );
