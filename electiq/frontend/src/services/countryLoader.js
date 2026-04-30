@@ -1,11 +1,11 @@
-import { saveToCache, loadFromCache } from './cache';
+import { saveCountry, loadCountry } from './db';
 
 const memoryCache = {};
 
 export async function loadCountryData(countryName) {
   if (memoryCache[countryName]) return memoryCache[countryName];
   
-  const cached = loadFromCache(countryName);
+  const cached = await loadCountry(countryName);
   if (cached) {
     memoryCache[countryName] = cached;
     return cached;
@@ -18,6 +18,6 @@ export async function loadCountryData(countryName) {
   const data = await response.json();
   
   memoryCache[countryName] = data;
-  saveToCache(countryName, data);
+  await saveCountry(countryName, data);
   return data;
 }
