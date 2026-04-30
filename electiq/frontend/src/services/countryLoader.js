@@ -1,4 +1,6 @@
+import { getCountryDetails } from './gemini';
 import { saveCountry, loadCountry } from './db';
+import { API } from './api';
 
 const memoryCache = {};
 
@@ -11,7 +13,7 @@ export async function loadCountryData(countryName) {
     return cached;
   }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/country/${encodeURIComponent(countryName)}`);
+  const response = await fetch(API.country(encodeURIComponent(countryName)));
   if (!response.ok) {
       throw new Error(`Failed to fetch data for ${countryName}`);
   }

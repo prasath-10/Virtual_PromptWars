@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { API } from '../services/api';
 
 export default function ElectionsStrip({ onCountrySelect }) {
   const [elections, setElections] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/active`)
+    fetch(API.active)
       .then(res => res.json())
       .then(data => {
         const sorted = (data.elections || []).sort((a, b) => a.daysUntil - b.daysUntil);

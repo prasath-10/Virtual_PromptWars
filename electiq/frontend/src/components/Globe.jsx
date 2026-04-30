@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { API } from '../services/api';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Sphere, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -220,7 +221,7 @@ export default function GlobeSection({ selectedCountryId, onCountrySelect }) {
       });
 
     // Fetch active elections from backend
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/active`)
+    fetch(API.active)
       .then(res => res.json())
       .then(data => setActiveElections(data.elections || []))
       .catch(() => setActiveElections(FALLBACK_HOTSPOTS));

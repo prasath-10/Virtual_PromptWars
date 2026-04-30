@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { API } from './services/api';
 import Navbar from './components/Navbar';
 import GlobeSection from './components/Globe';
 import ElectionsStrip from './components/ElectionsStrip';
@@ -24,7 +25,7 @@ export default function App() {
       if (!backendReady) setShowSlowWarning(true);
     }, 5000);
 
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/health`)
+    fetch(API.health)
       .then(() => { 
         setBackendReady(true); 
         setShowSlowWarning(false);
@@ -46,7 +47,7 @@ export default function App() {
       setCountryData({ name, ...data });
 
       // Fetch election date from our new API
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/${encodeURIComponent(name)}`);
+      const res = await fetch(API.country(encodeURIComponent(name)));
       if (res.ok) {
         const electData = await res.json();
         if (electData.found && electData.elections.length > 0) {
