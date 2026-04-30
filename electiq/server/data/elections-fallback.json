@@ -1,23 +1,12 @@
 [
-  {
-    "country": "Brazil",
-    "electionType": "General Election",
-    "date": "2026-10-04",
-    "daysUntil": 158,
-    "isActive": false
-  },
-  {
-    "country": "France",
-    "electionType": "Presidential Election",
-    "date": "2027-04-11",
-    "daysUntil": 347,
-    "isActive": false
-  },
-  {
-    "country": "Germany",
-    "electionType": "Federal Election",
-    "date": "2025-09-28",
-    "daysUntil": -213,
-    "isActive": false
-  }
+  {"country":"Australia","electionType":"Federal Election","date":"2025-05-03","daysUntil":4,"isActive":true},
+  {"country":"Philippines","electionType":"Midterm Election","date":"2025-05-12","daysUntil":13,"isActive":true},
+  {"country":"Poland","electionType":"Presidential Election","date":"2025-05-18","daysUntil":19,"isActive":true},
+  {"country":"Portugal","electionType":"Legislative Election","date":"2025-05-18","daysUntil":19,"isActive":true},
+  {"country":"Ethiopia","electionType":"General Election","date":"2025-06-20","daysUntil":52,"isActive":false},
+  {"country":"Canada","electionType":"General Election","date":"2025-10-20","daysUntil":174,"isActive":false},
+  {"country":"Germany","electionType":"Federal Election","date":"2025-09-28","daysUntil":152,"isActive":false},
+  {"country":"Argentina","electionType":"Legislative Election","date":"2025-10-26","daysUntil":180,"isActive":false},
+  {"country":"Chile","electionType":"Presidential Election","date":"2025-11-16","daysUntil":201,"isActive":false},
+  {"country":"Honduras","electionType":"General Election","date":"2025-11-30","daysUntil":215,"isActive":false}
 ]
