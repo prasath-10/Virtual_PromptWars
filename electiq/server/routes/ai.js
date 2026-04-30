@@ -41,10 +41,10 @@ router.get('/country/:name', async (req, res) => {
   console.log(`GET /api/country/${name} hit`);
 
   // Read key per-request (lazy) so missing key at startup doesn't crash the module
-  const apiKey = process.env.GEMINI_API_KEY || '';
+  const apiKey = process.env.VITE_GEMINI_API_KEY || '';
 
   if (!apiKey) {
-    console.error('❌ GEMINI_API_KEY not set – returning fallback data');
+    console.error('❌ VITE_GEMINI_API_KEY not set – returning fallback data');
     // Return fallback instead of 500 so the UI doesn't crash
     return res.json({
       explainer: `Election data for ${name} is currently unavailable. Please configure the Gemini API key on the server.`,
