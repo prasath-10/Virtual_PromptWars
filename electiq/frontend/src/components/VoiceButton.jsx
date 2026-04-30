@@ -33,6 +33,8 @@ export default function VoiceButton({ text }) {
   return (
     <button 
       onClick={handleClick}
+      aria-label={state === 'playing' ? 'Stop reading aloud' : 'Read explanation aloud'}
+      aria-pressed={state === 'playing'}
       className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
     >
       {state === 'default' && (

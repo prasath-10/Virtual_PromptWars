@@ -15,11 +15,11 @@ export default function TimelineSteps({ steps, accentColor }) {
           <div className="ml-4 flex-1">
             <div className="flex items-center justify-between mb-1">
               <h3 className="font-bold text-gray-800">{step.title}</h3>
-              <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#E6F1FB] text-[#0C447C]">
+              <span className="text-xs font-medium px-2 py-1 rounded-full bg-[#DBEAFE] text-[#0C447C]">
                 {step.date}
               </span>
             </div>
-            <p className="text-sm text-gray-500">{step.desc}</p>
+            <p className="text-sm text-gray-600">{step.desc}</p>
           </div>
         </div>
       ))}

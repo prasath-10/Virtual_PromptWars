@@ -90,6 +90,8 @@ export default function NotificationBell({ country, electionDate }) {
     <button 
       onClick={handleToggleSubscription}
       disabled={loading}
+      aria-label={isSubscribed ? 'Unsubscribe from election reminders' : 'Subscribe to election reminders'}
+      aria-pressed={isSubscribed}
       className={`p-2 rounded-full transition-all duration-300 ${isSubscribed ? 'text-amber-400 bg-amber-400/10' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
       title={isSubscribed ? 'Unsubscribe from notifications' : 'Subscribe to election reminders'}
     >

@@ -6,6 +6,21 @@ dotenv.config();
 
 const router = express.Router();
 
+// Helper: safely parse JSON with fallback
+export function safeParseJSON(text, fallback = []) {
+  if (!text) return fallback;
+  try {
+    const cleaned = text
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.warn('Gemini JSON parse failed, returning fallback');
+    return fallback;
+  }
+}
+
 // Helper: strip markdown fences Gemini sometimes adds around JSON
 const cleanJson = (text) => text.replace(/```json/g, '').replace(/```/g, '').trim();
 
@@ -74,29 +89,17 @@ Return ONLY a valid JSON array, nothing else:
     const explainer = explainerText
       || `${name} has a democratic election system. More details are currently unavailable.`;
 
-    let steps = [];
-    if (stepsText) {
-      try { steps = JSON.parse(cleanJson(stepsText)); }
-      catch { steps = [{ n: 1, title: 'Data Loading', desc: 'Election process data is updating.', date: 'TBD' }]; }
-    }
+    const steps = safeParseJSON(stepsText, [
+      { n: 1, title: 'Data Loading', desc: 'Election process data is updating.', date: 'TBD' }
+    ]);
 
-    let quiz = [];
-    if (quizText) {
-      try { quiz = JSON.parse(cleanJson(quizText)); }
-      catch { quiz = []; }
-    }
+    const quiz = safeParseJSON(quizText, []);
 
-    let facts = [];
-    if (factsText) {
-      try { facts = JSON.parse(cleanJson(factsText)); }
-      catch {
-        facts = [
-          'Elections are a cornerstone of democracy.',
-          'Voter participation drives election outcomes.',
-          'Election laws vary widely across countries.'
-        ];
-      }
-    }
+    const facts = safeParseJSON(factsText, [
+      'Elections are a cornerstone of democracy.',
+      'Voter participation drives election outcomes.',
+      'Election laws vary widely across countries.'
+    ]);
 
     console.log(`✅ /api/country/${name} – responding with full data`);
     res.json({ explainer, steps, quiz, facts });

@@ -45,14 +45,8 @@ function StarField() {
   );
 }
 
-function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections }) {
+function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections, focusedHotspotIndex }) {
   const earthRef = useRef();
-
-  useFrame(() => {
-    if (earthRef.current) {
-      earthRef.current.rotation.y += 0.001;
-    }
-  });
 
   // Match active elections with geo coordinates
   const hotspots = activeElections.map(election => {
@@ -60,6 +54,27 @@ function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections })
     if (!geo) return null;
     return { ...election, centroid: geo.centroid };
   }).filter(h => h !== null);
+
+  const targetRotation = useRef(0);
+
+  useEffect(() => {
+    if (focusedHotspotIndex >= 0 && hotspots[focusedHotspotIndex]) {
+      const lon = hotspots[focusedHotspotIndex].centroid[0];
+      targetRotation.current = (lon * Math.PI) / 180 + Math.PI / 2;
+    }
+  }, [focusedHotspotIndex, hotspots]);
+
+  useFrame(() => {
+    if (earthRef.current) {
+      if (focusedHotspotIndex >= 0) {
+        let diff = targetRotation.current - earthRef.current.rotation.y;
+        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+        earthRef.current.rotation.y += diff * 0.05;
+      } else {
+        earthRef.current.rotation.y += 0.001;
+      }
+    }
+  });
 
   return (
     <group>
@@ -80,7 +95,7 @@ function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections })
         <Hotspot 
           key={`${h.country}-${idx}`} 
           data={h} 
-          isSelected={selectedCountryId === h.country}
+          isSelected={selectedCountryId === h.country || focusedHotspotIndex === idx}
           onClick={() => onCountrySelect(h.country)}
         />
       ))}
@@ -163,6 +178,23 @@ export default function GlobeSection({ selectedCountryId, onCountrySelect }) {
   const [geoData, setGeoData] = useState([]);
   const [activeElections, setActiveElections] = useState([]);
   const [cameraZ, setCameraZ] = useState(5.5);
+  const [focusedHotspotIndex, setFocusedHotspotIndex] = useState(-1);
+
+  const handleGlobeKeyDown = (e) => {
+    if (activeElections.length === 0) return;
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setFocusedHotspotIndex(prev => prev <= 0 ? activeElections.length - 1 : prev - 1);
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setFocusedHotspotIndex(prev => prev >= activeElections.length - 1 ? 0 : prev + 1);
+    }
+    if (e.key === 'Enter' && focusedHotspotIndex >= 0) {
+      e.preventDefault();
+      onCountrySelect(activeElections[focusedHotspotIndex].country);
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setCameraZ(window.innerWidth <= 400 ? 6.5 : 5.5);
@@ -196,14 +228,28 @@ export default function GlobeSection({ selectedCountryId, onCountrySelect }) {
 
   return (
     <div className="w-full h-[450px] bg-[#0a1628] relative flex flex-col items-center justify-end overflow-hidden">
+      <div className="sr-only" aria-live="polite">
+        {focusedHotspotIndex >= 0 && activeElections[focusedHotspotIndex] 
+          ? `Focused on ${activeElections[focusedHotspotIndex].country}. Press Enter to select.` 
+          : ''}
+      </div>
       <div className="absolute inset-0">
-        <Canvas camera={{ position: [0, 0, cameraZ], fov: 45 }}>
+        <Canvas 
+          camera={{ position: [0, 0, cameraZ], fov: 45 }}
+          role="img"
+          aria-label="Interactive 3D globe showing countries with upcoming elections. Use left and right arrow keys to explore, and Enter to select."
+          tabIndex={0}
+          onKeyDown={handleGlobeKeyDown}
+          onFocus={() => { if (focusedHotspotIndex === -1 && activeElections.length > 0) setFocusedHotspotIndex(0); }}
+          onBlur={() => setFocusedHotspotIndex(-1)}
+        >
           <ambientLight intensity={0.5} />
           <Earth 
             selectedCountryId={selectedCountryId} 
             onCountrySelect={onCountrySelect} 
             geoData={geoData} 
             activeElections={activeElections}
+            focusedHotspotIndex={focusedHotspotIndex}
           />
         </Canvas>
       </div>

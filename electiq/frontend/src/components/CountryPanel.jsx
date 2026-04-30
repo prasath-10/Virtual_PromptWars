@@ -120,8 +120,11 @@ function QuizSection({ quiz, onCountryReset }) {
 
   return (
     <div className="mt-4 relative">
+      <div aria-live="assertive" aria-atomic="true" className="sr-only">
+        {isCorrect === true ? 'Correct!' : isCorrect === false && selectedOpt !== null ? `Wrong — the correct answer was ${question.opts[question.ans]}` : ''}
+      </div>
       <div className="flex items-center justify-between mb-4">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
           Question {currentQ + 1} of {quiz.length}
         </span>
         <span className="text-sm font-bold text-[#378ADD]">
@@ -162,6 +165,7 @@ function QuizSection({ quiz, onCountryReset }) {
               onClick={() => handleOptionClick(idx)}
               className={btnClass}
               disabled={selectedOpt !== null}
+              aria-pressed={selectedOpt === idx}
             >
               {opt}
             </button>
@@ -182,7 +186,12 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
   if (!country) return null;
 
   return (
-    <div className="bg-white rounded-[8px] border border-black/10 overflow-hidden shadow-sm animate-[slideIn_0.3s_ease-out]">
+    <div 
+      className="bg-white sm:rounded-[8px] sm:border border-y border-black/10 overflow-hidden sm:shadow-sm animate-[slideIn_0.3s_ease-out]"
+      role="region"
+      aria-label={`Election information for ${country.name}`}
+      aria-live="polite"
+    >
       <style>{`
         @keyframes slideIn {
           from { transform: translateY(20px); opacity: 0; }
@@ -196,7 +205,7 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
           <span className="text-3xl">🏳️</span>
           <div>
             <h2 className="text-lg font-medium text-gray-900">{country.name}</h2>
-            <p className="text-[13px] text-gray-500">Living Election Dashboard</p>
+            <p className="text-[13px] text-gray-600">Living Election Dashboard</p>
           </div>
         </div>
         <div className="px-3 py-1 bg-[#E6F1FB] text-[#378ADD] rounded-full text-xs font-semibold">
@@ -216,11 +225,15 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
           return (
             <button
               key={tab}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`${tab}-panel`}
+              id={`${tab}-tab`}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 rounded-t-lg text-sm font-medium transition ${
                 isActive 
                   ? 'bg-[#E6F1FB] text-[#378ADD] border-b-2 border-[#378ADD]' 
-                  : 'text-gray-500 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
               {labels[tab]}
@@ -230,7 +243,12 @@ export default function CountryPanel({ country, activeTab, setActiveTab, onCount
       </div>
 
       {/* Content */}
-      <div className="px-4 sm:px-6 py-6 min-h-[300px]">
+      <div 
+        className="px-4 sm:px-6 py-6 min-h-[300px]"
+        role="tabpanel"
+        id={`${activeTab}-panel`}
+        aria-labelledby={`${activeTab}-tab`}
+      >
         {activeTab === 'timeline' && <TimelineSteps steps={country.steps} accentColor="#378ADD" />}
         
         {activeTab === 'ai' && (

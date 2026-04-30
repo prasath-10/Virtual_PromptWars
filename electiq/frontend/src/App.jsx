@@ -14,11 +14,24 @@ export default function App() {
   const [countryData, setCountryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [electionDate, setElectionDate] = useState(null);
+  const [backendReady, setBackendReady] = useState(false);
+  const [showSlowWarning, setShowSlowWarning] = useState(false);
   useEffect(() => {
-    // Silently ping backend on app load to wake Render free tier
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/elections/active`)
-      .catch(() => {}); // intentionally silent
-  }, []);
+    const timeout = setTimeout(() => {
+      if (!backendReady) setShowSlowWarning(true);
+    }, 5000);
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/health`)
+      .then(() => { 
+        setBackendReady(true); 
+        setShowSlowWarning(false);
+        clearTimeout(timeout); 
+      })
+      .catch(() => clearTimeout(timeout));
+
+    return () => clearTimeout(timeout);
+  }, [backendReady]);
 
   const handleCountrySelect = async (name) => {
     setSelectedCountryName(name);
@@ -57,6 +70,13 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-sans">
       <ToastContainer />
+      
+      {showSlowWarning && !backendReady && (
+        <div className="bg-amber-100 text-amber-800 px-4 py-2 text-center text-sm font-medium animate-[slideIn_0.3s_ease-out]">
+          ⏳ Backend is waking up — this takes ~30s on first load. Hang tight!
+        </div>
+      )}
+
       <Navbar country={selectedCountryName} electionDate={electionDate} />
       
       <ErrorBoundary name="Globe" fallback={<div className="h-[400px] bg-[#0a1628] flex items-center justify-center text-white/40">3D Visualization Unavailable</div>}>
@@ -75,7 +95,7 @@ export default function App() {
         <ElectionsStrip onCountrySelect={handleCountrySelect} />
       </ErrorBoundary>
 
-      <main className="w-full sm:max-w-5xl mx-auto px-0 sm:px-4 py-4 sm:py-8">
+      <main id="main-content" className="w-full sm:max-w-5xl mx-auto px-0 sm:px-4 py-4 sm:py-8">
         <div className="mt-4 min-h-[300px]">
           {!selectedCountryName && (
             <div className="text-center text-gray-500 py-12 px-4">

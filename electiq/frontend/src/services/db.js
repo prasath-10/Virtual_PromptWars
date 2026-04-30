@@ -32,7 +32,14 @@ export async function saveCountry(countryName, data) {
       request.onerror = () => reject(request.error);
     });
   } catch (e) {
-    console.error('Failed to save country to IndexedDB', e);
+    console.warn('Failed to save country to IndexedDB, falling back to localStorage', e);
+    try {
+      localStorage.setItem(`electiq_${countryName}`, JSON.stringify({
+        data, timestamp: Date.now()
+      }));
+    } catch (err) {
+      console.error('localStorage fallback failed', err);
+    }
   }
 }
 
@@ -57,7 +64,18 @@ export async function loadCountry(countryName) {
       request.onerror = () => reject(request.error);
     });
   } catch (e) {
-    console.error('Failed to load country from IndexedDB', e);
+    console.warn('Failed to load country from IndexedDB, falling back to localStorage', e);
+    try {
+      const stored = localStorage.getItem(`electiq_${countryName}`);
+      if (stored) {
+        const result = JSON.parse(stored);
+        if (Date.now() - result.timestamp <= TTL) {
+          return result.data;
+        }
+      }
+    } catch (err) {
+      console.error('localStorage fallback failed', err);
+    }
     return null;
   }
 }
@@ -106,8 +124,21 @@ export async function getCachedCountries() {
       request.onerror = () => reject(request.error);
     });
   } catch (e) {
-    console.error('Failed to get cached countries', e);
-    return [];
+    console.warn('Failed to get cached countries, falling back to localStorage', e);
+    try {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('electiq_')) {
+          const item = JSON.parse(localStorage.getItem(key));
+          keys.push({ countryName: key.replace('electiq_', ''), timestamp: item.timestamp });
+        }
+      }
+      keys.sort((a, b) => b.timestamp - a.timestamp);
+      return keys.map(k => k.countryName);
+    } catch (err) {
+      return [];
+    }
   }
 }
 
