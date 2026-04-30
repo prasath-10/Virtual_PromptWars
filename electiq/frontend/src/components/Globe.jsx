@@ -13,6 +13,38 @@ const FALLBACK_HOTSPOTS = [
   { country: 'France', electionType: 'Legislative Election', daysUntil: 42 }
 ];
 
+function getFlagEmoji(countryName) {
+  const flags = {
+    'India': '🇮🇳',
+    'United States': '🇺🇸',
+    'United Kingdom': '🇬🇧',
+    'Brazil': '🇧🇷',
+    'France': '🇫🇷',
+  };
+  return flags[countryName] || '🏳️';
+}
+
+function StarField() {
+  const [geometry] = useState(() => {
+    const geo = new THREE.BufferGeometry();
+    const vertices = [];
+    for (let i = 0; i < 2000; i++) {
+      const x = (Math.random() - 0.5) * 30;
+      const y = (Math.random() - 0.5) * 30;
+      const z = (Math.random() - 0.5) * 30;
+      vertices.push(x, y, z);
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    return geo;
+  });
+
+  return (
+    <points geometry={geometry}>
+      <pointsMaterial color={0xffffff} size={0.03} sizeAttenuation={true} transparent opacity={0.6} />
+    </points>
+  );
+}
+
 function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections }) {
   const earthRef = useRef();
 
@@ -30,13 +62,19 @@ function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections })
   }).filter(h => h !== null);
 
   return (
-    <group ref={earthRef}>
-      <Sphere args={[2, 64, 64]}>
-        <meshBasicMaterial color="#0c1d36" wireframe={true} transparent opacity={0.3} />
-      </Sphere>
-      <Sphere args={[1.98, 64, 64]}>
-        <meshBasicMaterial color="#08101f" />
-      </Sphere>
+    <group>
+      <StarField />
+      <group ref={earthRef}>
+        <Sphere args={[2, 64, 64]}>
+          <meshBasicMaterial color="#0c1d36" wireframe={true} transparent opacity={0.3} />
+        </Sphere>
+        <Sphere args={[1.98, 64, 64]}>
+          <meshBasicMaterial color="#08101f" />
+        </Sphere>
+        {/* Atmosphere glow */}
+        <Sphere args={[2.3, 32, 32]}>
+          <meshBasicMaterial color={0x1a6bb5} transparent opacity={0.08} side={THREE.BackSide} />
+        </Sphere>
       
       {hotspots.map((h, idx) => (
         <Hotspot 
@@ -46,6 +84,7 @@ function Earth({ onCountrySelect, selectedCountryId, geoData, activeElections })
           onClick={() => onCountrySelect(h.country)}
         />
       ))}
+      </group>
     </group>
   );
 }
@@ -103,14 +142,16 @@ function Hotspot({ data, isSelected, onClick }) {
         <meshBasicMaterial color={color} transparent opacity={0.4} />
       </mesh>
 
-      {(hovered || isSelected) && (
+      {(hovered || isSelected || days <= 7) && (
         <Html distanceFactor={10} position={[0, 0.2, 0]} center zIndexRange={[100, 0]}>
-          <div className="bg-[#0a1628]/95 backdrop-blur-md px-3 py-2 rounded-lg border border-white/20 whitespace-nowrap pointer-events-none transform -translate-y-full mb-2 shadow-2xl flex flex-col items-start gap-0.5">
-            <span className="text-white font-bold text-xs uppercase tracking-wider">{data.country}</span>
-            <span className="text-white/80 text-[10px]">{data.electionType}</span>
-            <span className={`text-[10px] font-medium ${days <= 7 ? 'text-red-400' : 'text-amber-400'}`}>
-              {days <= 0 ? 'Election Today!' : `${days} days until`}
-            </span>
+          <div className="bg-[#0a1628]/95 backdrop-blur-md px-3 py-2 rounded-lg border border-white/20 whitespace-nowrap pointer-events-none transform -translate-y-full mb-2 shadow-2xl flex items-center gap-2 animate-[fadeIn_0.2s_ease-out]">
+            <span className="text-xl">{getFlagEmoji(data.country)}</span>
+            <div className="flex flex-col items-start gap-0.5">
+              <span className="text-white font-bold text-xs uppercase tracking-wider">{data.country}</span>
+              <span className={`text-[10px] font-medium ${days <= 7 ? 'text-red-400' : 'text-amber-400'}`}>
+                {days <= 0 ? 'Election Today!' : `${days} days until`}
+              </span>
+            </div>
           </div>
         </Html>
       )}

@@ -2,33 +2,50 @@ import React from 'react';
 
 export default function SkeletonLoader() {
   return (
-    <div className="animate-pulse flex flex-col space-y-6 mt-4">
+    <div className="flex flex-col w-full">
       <style>{`
         @keyframes shimmer {
-          0% { opacity: 0.4; }
-          50% { opacity: 1; }
-          100% { opacity: 0.4; }
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
         }
-        .shimmer-pulse {
-          animation: shimmer 1.5s infinite ease-in-out;
+
+        .skeleton {
+          background: linear-gradient(
+            90deg,
+            #f3f4f6 25%,
+            #e5e7eb 50%,
+            #f3f4f6 75%
+          );
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
+          border-radius: 6px;
         }
       `}</style>
       
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3 w-full">
-          <div className="w-10 h-10 bg-gray-200 rounded-full shimmer-pulse shrink-0"></div>
-          <div className="space-y-2 w-full">
-            <div className="h-5 bg-gray-200 rounded shimmer-pulse w-[60%]"></div>
-            <div className="h-3 bg-gray-200 rounded shimmer-pulse w-[40%]"></div>
-          </div>
+      {/* Header (flag, name, badge) */}
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between mt-4">
+        <div className="flex items-center space-x-3">
+          <div className="skeleton w-10 h-10 rounded-full shrink-0"></div>
+          <div className="skeleton w-40 h-6"></div>
         </div>
+        <div className="skeleton w-24 h-6 rounded-full"></div>
       </div>
-      
-      <div className="px-6 space-y-4">
-        <div className="h-4 bg-gray-200 rounded shimmer-pulse w-[100%]"></div>
-        <div className="h-4 bg-gray-200 rounded shimmer-pulse w-[100%]"></div>
-        <div className="h-4 bg-gray-200 rounded shimmer-pulse w-[80%]"></div>
-        <div className="h-4 bg-gray-200 rounded shimmer-pulse w-[90%]"></div>
+
+      {/* Tabs */}
+      <div className="flex px-6 pt-4 space-x-2 border-b border-gray-100">
+        <div className="skeleton w-20 h-8 rounded-t-lg"></div>
+        <div className="skeleton w-24 h-8 rounded-t-lg"></div>
+        <div className="skeleton w-16 h-8 rounded-t-lg"></div>
+      </div>
+
+      {/* Steps */}
+      <div className="px-6 py-6 space-y-4">
+        <div className="skeleton w-full h-4"></div>
+        <div className="skeleton w-full h-4"></div>
+        <div className="skeleton w-[80%] h-4"></div>
+        <div className="skeleton w-[90%] h-4"></div>
+        <div className="skeleton w-[70%] h-4"></div>
+        <div className="skeleton w-[85%] h-4"></div>
       </div>
     </div>
   );
