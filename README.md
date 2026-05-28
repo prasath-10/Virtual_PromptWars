@@ -6,7 +6,7 @@
 
 ## Chosen Vertical
 
-**Civic Education & Democratic Participation**
+**Civic Education & Democratic Participaton**
 
 First-time voters around the world face the same problem: the election process is confusing, government websites are hard to navigate, and there is no single place that explains what to do, when, and why — in plain language.
 
